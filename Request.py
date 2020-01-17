@@ -24,8 +24,21 @@ data_list = []
 for row in table.find_all('tr'):
     for cell in row.find_all('td'):
         tmp_list.append(cell.text)
+
+    while len(tmp_list) < 19:
+        tmp_list.append('-')
+
     data_list.append(tmp_list)
     tmp_list = []
 
-for data in data_list:
-    print(data)
+data_list.pop(0)
+
+
+def get_data_doc():
+    data_doc = []
+
+    for data in data_list:
+        data_dict = {'Station': data[0], 'Time': data[1] ,'Dew Point': data[5]}
+        data_doc.append(data_dict)
+
+    return data_doc

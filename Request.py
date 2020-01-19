@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
+from TimeStamps import TimeStamps
 
 login_data = {
     "login": "demo",
@@ -72,18 +73,75 @@ def get_table(url):
     return soup.find("table", attrs={"class": "norm", "id": "table-1"})
 
 
-def get_old_tables(url_modifiers: list) -> list:
+def get_old_tables(modified_urls: list) -> list:
     old_tables = []
 
     with requests.session() as s:
         r = s.post('http://www.lvceli.lv/cms/', data=login_data, headers=headers)
 
-        for modifier in url_modifiers:
-            r = s.get('http://www.lvceli.lv/cms/?h=' + modifier)
+        for url in modified_urls:
+            r = s.get(url)
             soup = BeautifulSoup(r.content, 'html5lib')
             old_tables.append(soup.find("table", attrs={"class": "norm", "id": "table-1"}))
 
     return old_tables
 
 
+def get_time_stamps() -> dict:
+    time_stamps = TimeStamps()
+    return time_stamps.get()
 
+
+def get_valid_dates(time_stamps) -> list:
+    valid_dates = []
+
+    year_start = time_stamps['Year Start']
+    year_stop = time_stamps['Year Stop']
+
+    month_start = time_stamps['Month Start']
+    month_stop = time_stamps['Month Stop']
+
+    day_start = time_stamps['Day Start']
+    day_step = time_stamps['Day Step']
+    day_stop = time_stamps['Day Stop']
+
+    hour_start = time_stamps['Hour Start']
+    hour_step = time_stamps['Hour Step']
+    hour_stop = time_stamps['Hour Stop']
+
+    date_start = datetime(year_start, month_start, day_start, hour_start, 0, 0)
+    date_stop = datetime(year_stop, month_stop, day_stop, hour_stop, 0, 0)
+    date_step = timedelta(days=day_step, hours=hour_step)
+    date_next = date_start + date_step
+
+    while date_next <= date_stop:
+        valid_dates.append(date_next)
+        date_next += date_step
+
+    return valid_dates
+
+
+def transform_date_into_url_modifier(date) -> str:
+    return '{}{:02d}{:02d}{:02d}'.format(date.year, date.month, date.day, date.hour)
+
+
+def get_url_modifiers() -> list:
+    url_modifiers = []
+
+    valid_dates = get_valid_dates(get_time_stamps())
+
+    for date in valid_dates:
+        url_modifiers.append(transform_date_into_url_modifier(date))
+
+    return url_modifiers
+
+
+def get_modified_urls():
+    modified_urls = []
+    for modifier in get_url_modifiers():
+        modified_urls.append('http://www.lvceli.lv/cms/index.php?h=' + modifier)
+
+    return modified_urls
+
+
+print(get_old_tables(get_modified_urls()))

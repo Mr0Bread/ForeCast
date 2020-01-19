@@ -1,26 +1,36 @@
-from datetime import datetime
+class TimeStamps:
+    def __init__(self):
+        self.year_start = 2020
+        self.year_step = 0
+        self.year_stop = 2020
 
+        self.month_start = 1
+        self.month_step = 0
+        self.month_stop = 1
 
-def get_year_start():
-    error = True
-    while error:
-        error = False
-        try:
-            year_start = int(input('Enter start year\n'))
-        except ValueError:
-            print('Invalid input!')
-            error = True
-            continue
+        self.day_start = 10
+        self.dat_step = 1
+        self.day_stop = 17
 
-        if 2018 < year_start < datetime.now().year + 1:
-            return year_start
-        else:
-            print('Invalid year value')
-            error = True
+        self.hour_start = 12
+        self.hour_step = 0
+        self.hour_stop = 12
 
+    def get(self):
+        return {
+            'Year Start': self.year_start,
+            'Year Step': self.year_step,
+            'Year Stop': self.year_stop,
 
-def get_time_stamp_url_modifier() -> str:
-    year_start = get_year_start()
+            'Month Start': self.month_start,
+            'Month Step': self.month_step,
+            'Month Stop': self.month_stop,
 
+            'Day Start': self.day_start,
+            'Day Step': self.dat_step,
+            'Day Stop': self.day_stop,
 
-get_year_start()
+            'Hour Start': self.hour_start,
+            'Hour Step': self.hour_step,
+            'Hour Stop': self.hour_stop
+        }

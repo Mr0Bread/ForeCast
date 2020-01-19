@@ -144,4 +144,21 @@ def get_modified_urls():
     return modified_urls
 
 
-print(get_old_tables(get_modified_urls()))
+def get_data_from_old_tables(old_tables):
+    data = []
+    rows = []
+    cells = []
+    for table in old_tables:
+        for row in table.find_all('tr'):
+            for cell in row.find_all('td'):
+                cells.append(cell.text)
+            rows.append(cells)
+            cells = []
+        data.append(rows)
+        rows = []
+
+    for x in data:
+        print(x)
+
+
+get_data_from_old_tables(get_old_tables(get_modified_urls()))

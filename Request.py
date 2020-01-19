@@ -68,8 +68,22 @@ def get_table(url):
     with requests.session() as s:
         r = s.post('http://www.lvceli.lv/cms/', data=login_data, headers=headers)
 
-        if len(url) > 25:
-            r = s.get(url)
-
-    soup = BeautifulSoup(r.content, "html5lib")
+    soup = BeautifulSoup(r.content, 'html5lib')
     return soup.find("table", attrs={"class": "norm", "id": "table-1"})
+
+
+def get_old_tables(url_modifiers: list) -> list:
+    old_tables = []
+
+    with requests.session() as s:
+        r = s.post('http://www.lvceli.lv/cms/', data=login_data, headers=headers)
+
+        for modifier in url_modifiers:
+            r = s.get('http://www.lvceli.lv/cms/?h=' + modifier)
+            soup = BeautifulSoup(r.content, 'html5lib')
+            old_tables.append(soup.find("table", attrs={"class": "norm", "id": "table-1"}))
+
+    return old_tables
+
+
+

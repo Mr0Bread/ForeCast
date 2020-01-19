@@ -2,8 +2,15 @@ from MongoDBExporter import MongoDBExporter
 from datetime import datetime
 
 
-def get_url_modifier() -> str:
+def ask_start_day() -> int:
     pass
+
+
+def get_time_period() -> dict:
+    time_period = {}
+    time_period['Start Day'] = ask_start_day()
+
+    return time_period
 
 
 class AutoDBFiller(MongoDBExporter):
@@ -11,4 +18,7 @@ class AutoDBFiller(MongoDBExporter):
         super().__init__()
 
     def fill_collections_with_old_data(self):
-        url_modifier = get_url_modifier()
+        time_period = get_time_period()
+
+
+get_time_period()

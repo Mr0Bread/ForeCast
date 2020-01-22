@@ -1,7 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+from time import sleep
 from TimeStamps import TimeStamps
+import threading
 
 login_data = {
     "login": "demo",
@@ -41,24 +43,10 @@ def get_date() -> str:
     return 'Year: {} Month: {} Day: {}'.format(year, month, day)
 
 
-def get_current_fill_data() -> list:
+def get_current_fill_data_doc() -> list:
     data_doc = []
 
     for data in get_data_list():
-        data_dict = {'Station': data[0], 'Time': data[1], 'Date': get_date(), 'Dew Point': data[5]}
-        data_doc.append(data_dict)
-
-    return data_doc
-
-
-def get_past_url(hour, day, month, year):
-    return 'http://www.lvceli.lv/cms/index.php?h={}{:02d}{:02d}{:02d}'.format(year, month, day, hour)
-
-
-def get_past_fill_data(hour: int, day: int, month: int, year: int) -> list:
-    data_doc = []
-
-    for data in get_data_list(get_past_url(hour, day, month, year)):
         data_dict = {'Station': data[0], 'Time': data[1], 'Date': get_date(), 'Dew Point': data[5]}
         data_doc.append(data_dict)
 
@@ -144,7 +132,7 @@ def get_modified_urls():
     return modified_urls
 
 
-def get_data_from_old_tables(old_tables):
+def get_data_from_old_tables(old_tables) -> list:
     data = []
     rows = []
     cells = []
@@ -154,11 +142,24 @@ def get_data_from_old_tables(old_tables):
                 cells.append(cell.text)
             rows.append(cells)
             cells = []
+        rows.pop(0)
         data.append(rows)
         rows = []
 
-    for x in data:
-        print(x)
+    return data
 
 
-get_data_from_old_tables(get_old_tables(get_modified_urls()))
+def get_data_doc_from_data(data: list) -> list:
+    data_doc = []
+    for table in data:
+        for row in table:
+            if len(row) < 19:
+                continue
+            else:
+                data_doc.append({'Station': row[0], 'Time': row[1], 'Dew Point': row[5]})
+
+    return data_doc
+
+
+def enable_realtime_data_collecting(update_frequency_in_seconds: int, samples_quantity: int):
+    pass

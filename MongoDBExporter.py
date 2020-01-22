@@ -1,5 +1,5 @@
 import pymongo
-from Request import get_current_fill_data, get_past_fill_data, get_table
+from Request import get_data_doc_from_data, get_data_from_old_tables, get_old_tables, get_modified_urls
 
 
 def get_station_names(fill_data: list) -> list:
@@ -50,3 +50,7 @@ class MongoDBExporter:
 
         collection = self.database[coll_name]
         collection.insert_one(data_dict)
+
+
+exporter = MongoDBExporter()
+exporter.fill_database(get_data_doc_from_data(get_data_from_old_tables(get_old_tables(get_modified_urls()))))

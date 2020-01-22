@@ -19,11 +19,9 @@ class TimeStamps:
     def get(self):
         return {
             'Year Start': self.year_start,
-            'Year Step': self.year_step,
             'Year Stop': self.year_stop,
 
             'Month Start': self.month_start,
-            'Month Step': self.month_step,
             'Month Stop': self.month_stop,
 
             'Day Start': self.day_start,

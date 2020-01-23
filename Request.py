@@ -1,25 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-from time import sleep
 from TimeStamps import TimeStamps
-import threading
-
-login_data = {
-    "login": "demo",
-    "password": "demo"
-}
-
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                  'Chrome/78.0.3904.108 Safari/537.36 '
-}
+from Request_data import headers, login_data
 
 
-def get_data_list(url="http://www.lvceli.lv/cms/") -> list:
+def get_data_list(table) -> list:
     tmp_list = []
     data_list = []
-    table = get_table(url)
 
     for row in table.find_all('tr'):
         for cell in row.find_all('td'):
@@ -32,22 +20,42 @@ def get_data_list(url="http://www.lvceli.lv/cms/") -> list:
         tmp_list = []
 
     data_list.pop(0)
+
     return data_list
 
 
 def get_date() -> str:
-    day = datetime.now().day
-    month = datetime.now().month
     year = datetime.now().year
+    month = datetime.now().month
+    day = datetime.now().day
 
     return 'Year: {} Month: {} Day: {}'.format(year, month, day)
 
 
-def get_current_fill_data_doc() -> list:
+def get_fill_data_doc(table) -> list:
     data_doc = []
 
-    for data in get_data_list():
-        data_dict = {'Station': data[0], 'Time': data[1], 'Date': get_date(), 'Dew Point': data[5]}
+    for data in get_data_list(table):
+        data_dict = {'Station': data[0],
+                     'Time': data[1],
+                     'Date': get_date(),
+                     'Air Temperature': data[2],
+                     'Air Temperature(-1 h)': data[3],
+                     'Humidity': data[4],
+                     'Dew Point': data[5],
+                     'Precipitation': data[6],
+                     'Intensity': data[7],
+                     'Visibility': data[8],
+                     'Road Temperature': data[9],
+                     'Road Temperature(-1 h)': data[10],
+                     'Road Condition': data[11],
+                     'Road Warning': data[12],
+                     'Freezing Point': data[13],
+                     'Road Temperature 2': data[14],
+                     'Road Temperature 2(-1 h)': data[15],
+                     'Road Condition 2': data[16],
+                     'Road Warning 2': data[17],
+                     'Freezing Point 2': data[18]}
         data_doc.append(data_dict)
 
     return data_doc
@@ -159,7 +167,3 @@ def get_data_doc_from_data(data: list) -> list:
                 data_doc.append({'Station': row[0], 'Time': row[1], 'Dew Point': row[5]})
 
     return data_doc
-
-
-def enable_realtime_data_collecting(update_frequency_in_seconds: int, samples_quantity: int):
-    pass

@@ -27,8 +27,18 @@ class AutoDBFiller(MongoDBExporter):
                 request = s.post(url, login_data, headers=headers)
                 soup = BeautifulSoup(request.content, 'html5lib')
                 table = soup.find("table", attrs={"class": "norm", "id": "table-1"})
-                fill_data = get_fill_data_doc(table)
-                self.fill_database(fill_data)
+                fill_data_doc = get_fill_data_doc(table)
+
+                if self.first_filling:
+                    self.fill_time_database(fill_data_doc)
+                    self.fill_database(fill_data_doc)
+                    self.first_filling = False
+                    print('First filling completed')
+                else:
+                    fill_data_doc = self.get_relevant_fill_data_doc(fill_data_doc)
+                    self.fill_database(fill_data_doc)
+                    print('Another filling completed')
+
                 print('collecting finished')
 
     def disable_realtime_data_collection(self):

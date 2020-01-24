@@ -1,10 +1,27 @@
-import requests
-from bs4 import BeautifulSoup
 from threading import Thread
 from time import sleep
-from Request_data import headers, login_data, url
+from os import remove
+from os.path import isfile
+
+import requests
+from bs4 import BeautifulSoup
+
 from MongoDBExporter import MongoDBExporter
 from Request import get_fill_data_doc
+from Request_data import headers, login_data, url
+
+
+def mark_first_filling(param: bool) -> bool:
+    file_name = 'first_filling.txt'
+    with open(file_name, 'w') as file:
+        if not param:
+            print('marked first filling with false')
+            file.write('0')
+            return False
+        else:
+            print('marked first filling with true')
+            file.write('1')
+            return True
 
 
 class AutoDBFiller(MongoDBExporter):
@@ -14,12 +31,19 @@ class AutoDBFiller(MongoDBExporter):
         self.thread_is_running = False
         self.data = []
 
-    def enable_realtime_data_collection(self, update_frequency_in_seconds: int = 180):
-        self.thread = Thread(target=self.collect_data_in_realtime(update_frequency_in_seconds))
+    def __del__(self):
+        print('Destructor has been called')
+        if isfile('first_filling.txt'):
+            remove('first_filling.txt')
+
+    def enable_realtime_data_collection(self, update_frequency_in_seconds: float = 10):
         self.thread_is_running = True
+        self.thread = Thread(target=self.collect_data_in_realtime(update_frequency_in_seconds))
+        print('starting thread')
         self.thread.start()
 
     def collect_data_in_realtime(self, update_frequency_in_seconds):
+        print('creating session')
         with requests.session() as s:
             while self.thread_is_running:
                 sleep(update_frequency_in_seconds)
@@ -29,10 +53,10 @@ class AutoDBFiller(MongoDBExporter):
                 table = soup.find("table", attrs={"class": "norm", "id": "table-1"})
                 fill_data_doc = get_fill_data_doc(table)
 
-                if self.first_filling:
+                if self.is_it_first_filling:
                     self.fill_time_database(fill_data_doc)
                     self.fill_database(fill_data_doc)
-                    self.first_filling = False
+                    self.is_it_first_filling = mark_first_filling(False)
                     print('First filling completed')
                 else:
                     fill_data_doc = self.get_relevant_fill_data_doc(fill_data_doc)
@@ -43,7 +67,10 @@ class AutoDBFiller(MongoDBExporter):
 
     def disable_realtime_data_collection(self):
         self.thread_is_running = False
+        self.thread.join()
 
 
 filler = AutoDBFiller()
+print('enabling realtime data collection')
 filler.enable_realtime_data_collection()
+print('after enabling')

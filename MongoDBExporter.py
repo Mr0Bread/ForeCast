@@ -1,5 +1,5 @@
 import pymongo
-from Request import get_data_doc_from_data, get_data_from_old_tables, get_old_tables, get_modified_urls
+from os.path import isfile
 
 
 def get_station_names(fill_data: list) -> list:
@@ -21,7 +21,35 @@ class MongoDBExporter:
             "mongodb+srv://Mr0Bread:Elishka1Love@forecastcluster-ruxkg.gcp.mongodb.net/test?retryWrites=true&w=majority")
         self.main_database = self.my_client['MeteoInfoTable']
         self.time_database = self.my_client['LastInsertTable']
-        self.first_filling = True
+        self.is_it_first_filling = self.is_not_first_filling_made()
+
+    def is_not_first_filling_made(self):
+        file_name = 'first_filling.txt'
+
+        if not isfile(file_name):
+            print('creating {}'.format(file_name))
+
+            with open(file_name, 'w') as file:
+                if self.is_time_database_exists():
+                    print('Time_database exists and so returning False')
+                    file.write('0')
+                    return False
+                else:
+                    print('Time database doesn\'t exist and so returning True')
+                    file.write('1')
+                    return True
+
+        elif isfile(file_name):
+            print('File exists')
+            with open(file_name, 'r') as file:
+                file_info = int(file.read())
+
+                if file_info == 1 and not self.is_time_database_exists():
+                    print('return True')
+                    return True
+                else:
+                    print('return False')
+                    return False
 
     def clear_collection(self, coll_name: str):
         self.main_database.drop_collection(coll_name)
@@ -53,28 +81,47 @@ class MongoDBExporter:
         collection = self.main_database[coll_name]
         collection.insert_one(data_dict)
 
-    def get_relevant_fill_data_doc(self, fill_data: list):
+    def get_relevant_fill_data_doc(self, fill_data: list) -> list:
         for data_dict in fill_data:
-            if not self.is_row_relevant(data_dict):
+            print(data_dict)
+            if not self.is_imported_row_relevant(data_dict):
+                print('removing row')
                 fill_data.remove(data_dict)
 
+        print(fill_data)
         return fill_data
 
-    def is_row_relevant(self, data_dict: dict):
-        for data in data_dict:
-            collection = self.time_database[data['Station']]
-            selected_row = collection.find({}, {'_id': 0, 'Time': 1, 'Date': 1})
+    def is_imported_row_relevant(self, data_dict: dict) -> bool:
+        collection = self.time_database[data_dict['Station']]
+        search_result = collection.find({}, {'_id': 0, 'Time': 1, 'Date': 1})
 
-            if data['Time'] != selected_row['Time'] or data['Date'] != selected_row['Date']:
+        for selected_row in search_result:
+
+            if data_dict['Time'] != selected_row['Time'] or data_dict['Date'] != selected_row['Date']:
+                print('imported row is obsolete')
                 return True
             else:
+                print('imported row is still relevant')
                 return False
 
     def fill_time_database(self, fill_data: list):
+        print('Filling time database')
+        if self.is_time_database_exists():
+            print('Deleting obsolete time database')
+            self.delete_database('LastInsertTable')
+
         for data in fill_data:
             collection = self.time_database[data['Station']]
             collection.insert_one({'Time': data['Time'], 'Date': data['Date']})
 
+    def is_time_database_exists(self) -> bool:
+        database_list = self.my_client.list_database_names()
+        if 'LastInsertTable' in database_list:
+            print('LastInsertTable exists')
+            return True
+        else:
+            print('LastInsertTable doesn\'t exists')
+            return False
 
-exporter = MongoDBExporter()
-exporter.fill_database(get_data_doc_from_data(get_data_from_old_tables(get_old_tables(get_modified_urls()))))
+    def delete_database(self, database_name: str):
+        self.my_client.drop_database(database_name)

@@ -71,4 +71,5 @@ class AutoDBFiller(MongoDBExporter):
 
 
 filler = AutoDBFiller()
-filler.get_info_from_main_database()
+data_list = filler.get_info_from_main_database()
+get_list_of_values(data_list, 'Dew Point')

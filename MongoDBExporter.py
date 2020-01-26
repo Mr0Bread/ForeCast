@@ -2,19 +2,6 @@ import pymongo
 from os.path import isfile
 
 
-def get_station_names(fill_data: list) -> list:
-    station_names = []
-
-    for data_dict in fill_data:
-        station_names.append(data_dict['Station'])
-
-    return station_names
-
-
-def get_scrape_time(data_dict: dict) -> str:
-    return data_dict['Time']
-
-
 class MongoDBExporter:
     def __init__(self):
         self.my_client = pymongo.MongoClient(
@@ -137,3 +124,18 @@ class MongoDBExporter:
 
     def delete_database(self, database_name: str):
         self.my_client.drop_database(database_name)
+
+    def get_info_from_main_database(self):
+        collection_names = self.main_database.list_collection_names()
+        __list = []
+        temp_dict = {}
+        temp_list = []
+        for name in collection_names:
+            for search_result in self.main_database[name].find():
+                search_result.pop('_id')
+                search_result['Station'] = name
+                temp_list.append(search_result)
+            __list.append(temp_list)
+            temp_list = []
+
+        return __list

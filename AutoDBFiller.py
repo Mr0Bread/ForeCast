@@ -32,7 +32,6 @@ class AutoDBFiller(MongoDBExporter):
         self.data = []
 
     def __del__(self):
-        print('Destructor has been called')
         if isfile('first_filling.txt'):
             remove('first_filling.txt')
 
@@ -72,6 +71,4 @@ class AutoDBFiller(MongoDBExporter):
 
 
 filler = AutoDBFiller()
-print('enabling realtime data collection')
-filler.enable_realtime_data_collection()
-print('after enabling')
+filler.get_info_from_main_database()

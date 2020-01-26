@@ -15,6 +15,20 @@ def get_list_of_values(data_list: list, value_name: str) -> list:
     return __list
 
 
+def get_corresponding_list_of_time(data_list: list) -> list:
+    __list = []
+    __temp_list = []
+    for list_of_dicts in data_list:
+        for data_dict in list_of_dicts:
+            __temp_list.append(data_dict['Date'])
+            __temp_list.append(data_dict['Time'])
+        else:
+            __temp_list.append(data_dict['Station'])
+        __list.append(__temp_list)
+        __temp_list = []
+    return __list
+
+
 class MongoDBExporter:
     def __init__(self):
         self.my_client = pymongo.MongoClient(
@@ -151,3 +165,5 @@ class MongoDBExporter:
             temp_list = []
 
         return __list
+
+

@@ -6,7 +6,7 @@ from os.path import isfile
 import requests
 from bs4 import BeautifulSoup
 
-from MongoDBExporter import MongoDBExporter
+from MongoDBExporter import MongoDBExporter, get_list_of_values, get_corresponding_list_of_time
 from Request import get_fill_data_doc
 from Request_data import headers, login_data, url
 
@@ -71,5 +71,7 @@ class AutoDBFiller(MongoDBExporter):
 
 
 filler = AutoDBFiller()
-data_list = filler.get_info_from_main_database()
-get_list_of_values(data_list, 'Dew Point')
+data_list = filler.get_list_of_info_from_main_database()
+print(get_list_of_values(data_list, 'Dew Point'))
+print(get_corresponding_list_of_time(data_list))
+

@@ -31,11 +31,11 @@ class MongoDBExporter:
 
             with open(file_name, 'w') as file:
                 if self.is_time_database_exists():
-                    print('Time_database exists and so returning False')
+                    print(' Time_database exists and so returning False')
                     file.write('0')
                     return False
                 else:
-                    print('Time database doesn\'t exist and so returning True')
+                    print(' Time database doesn\'t exist and so returning True')
                     file.write('1')
                     return True
 
@@ -45,10 +45,10 @@ class MongoDBExporter:
                 file_info = int(file.read())
 
                 if file_info == 1 and not self.is_time_database_exists():
-                    print('return True')
+                    print(' return True')
                     return True
                 else:
-                    print('return False')
+                    print(' return False')
                     return False
 
     def clear_collection(self, coll_name: str):
@@ -71,7 +71,7 @@ class MongoDBExporter:
     def get_collection_names(self) -> list:
         return self.main_database.list_collection_names()
 
-    def fill_database(self, fill_data: list):
+    def fill_main_database(self, fill_data: list):
         for data_dict in fill_data:
             self.fill_collection(data_dict, data_dict['Station'])
 
@@ -82,20 +82,32 @@ class MongoDBExporter:
         collection.insert_one(data_dict)
 
     def get_relevant_fill_data_doc(self, fill_data: list) -> list:
+        __fill_data = []
         for data_dict in fill_data:
             print(data_dict)
             if not self.is_imported_row_relevant(data_dict):
                 print('removing row')
-                fill_data.remove(data_dict)
+            else:
+                print('adding row to returning list')
+                __fill_data.append(data_dict)
 
-        print(fill_data)
-        return fill_data
+        print(__fill_data)
+        return __fill_data
+
+    def update_time_database(self, fill_data: list):
+        for data_dict in fill_data:
+            collection = self.time_database[data_dict['Station']]
+            collection.drop()
+            collection.insert_one({'Time': data_dict['Time'], 'Date': data_dict['Date']})
 
     def is_imported_row_relevant(self, data_dict: dict) -> bool:
         collection = self.time_database[data_dict['Station']]
         search_result = collection.find({}, {'_id': 0, 'Time': 1, 'Date': 1})
 
         for selected_row in search_result:
+            print('inside "for selected_row in search_result loop"')
+            print(' Time in row ready to be imported: {}'.format(data_dict['Time']))
+            print(' Time in selected row: {}'.format(selected_row['Time']))
 
             if data_dict['Time'] != selected_row['Time'] or data_dict['Date'] != selected_row['Date']:
                 print('imported row is obsolete')
@@ -107,12 +119,12 @@ class MongoDBExporter:
     def fill_time_database(self, fill_data: list):
         print('Filling time database')
         if self.is_time_database_exists():
-            print('Deleting obsolete time database')
+            print(' Deleting obsolete time database')
             self.delete_database('LastInsertTable')
 
-        for data in fill_data:
-            collection = self.time_database[data['Station']]
-            collection.insert_one({'Time': data['Time'], 'Date': data['Date']})
+        for data_dict in fill_data:
+            collection = self.time_database[data_dict['Station']]
+            collection.insert_one({'Time': data_dict['Time'], 'Date': data_dict['Date']})
 
     def is_time_database_exists(self) -> bool:
         database_list = self.my_client.list_database_names()

@@ -47,7 +47,7 @@ class AutoDBFiller(MongoDBExporter):
         with requests.session() as s:
             while self.thread_is_running:
                 sleep(update_frequency_in_seconds)
-                print('collecting')
+                print(' collecting')
                 request = s.post(url, login_data, headers=headers)
                 soup = BeautifulSoup(request.content, 'html5lib')
                 table = soup.find("table", attrs={"class": "norm", "id": "table-1"})
@@ -55,15 +55,16 @@ class AutoDBFiller(MongoDBExporter):
 
                 if self.is_it_first_filling:
                     self.fill_time_database(fill_data_doc)
-                    self.fill_database(fill_data_doc)
+                    self.fill_main_database(fill_data_doc)
                     self.is_it_first_filling = mark_first_filling(False)
-                    print('First filling completed')
+                    print('  First filling completed')
                 else:
                     fill_data_doc = self.get_relevant_fill_data_doc(fill_data_doc)
-                    self.fill_database(fill_data_doc)
-                    print('Another filling completed')
+                    self.update_time_database(fill_data_doc)
+                    self.fill_main_database(fill_data_doc)
+                    print('  Another filling completed')
 
-                print('collecting finished')
+                print(' collecting finished')
 
     def disable_realtime_data_collection(self):
         self.thread_is_running = False

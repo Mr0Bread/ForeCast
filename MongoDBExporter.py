@@ -15,12 +15,37 @@ def get_list_of_values(data_list: list, value_name: str) -> list:
     return __list
 
 
+def zip_time_and_values(list_of_values_lists: list, list_of_time_lists: list) -> list:
+    __list = []
+    __temp_list1 = []
+    __temp_list2 = []
+    __temp_list3 = []
+    station_names = []
+
+    for list_of_values in list_of_values_lists:
+        station_names.append(list_of_values[len(list_of_values) - 1])
+        list_of_values.pop(len(list_of_values) - 1)
+        __temp_list1.append(list_of_values)
+    else:
+        for list_of_time in list_of_time_lists:
+            list_of_time.pop(len(list_of_time) - 1)
+            __temp_list2.append(list_of_time)
+
+        for value, time, station_name in zip(__temp_list1, __temp_list2, station_names):
+            __temp_list3.append(station_name)
+            __temp_list3.append(value)
+            __temp_list3.append(time)
+            __list.append(__temp_list3)
+            __temp_list3 = []
+
+    return __list
+
+
 def get_corresponding_list_of_time(data_list: list) -> list:
     __list = []
     __temp_list = []
     for list_of_dicts in data_list:
         for data_dict in list_of_dicts:
-            __temp_list.append(data_dict['Date'])
             __temp_list.append(data_dict['Time'])
         else:
             __temp_list.append(data_dict['Station'])
@@ -165,5 +190,3 @@ class MongoDBExporter:
             temp_list = []
 
         return __list
-
-

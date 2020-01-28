@@ -2,7 +2,7 @@ import pymongo
 from os.path import isfile
 
 
-class MongoDBExporter:
+class MongoDBClient:
     def __init__(self):
         self.my_client = pymongo.MongoClient(
             "mongodb+srv://Mr0Bread:Elishka1Love@forecastcluster-ruxkg.gcp.mongodb.net/test?retryWrites=true&w=majority")
@@ -189,4 +189,16 @@ class MongoDBExporter:
                 __temp_list.append(data_dict['Station'])
             __list.append(__temp_list)
             __temp_list = []
+        return __list
+
+    @staticmethod
+    def get_list_of_numbers(list_of_values: list) -> list:
+        __list = []
+
+        for value in list_of_values:
+            try:
+                __list.append(float(value))
+            except ValueError:
+                __list.append('-')
+
         return __list

@@ -6,7 +6,7 @@ from os.path import isfile
 import requests
 from bs4 import BeautifulSoup
 
-from MongoDBExporter import MongoDBExporter
+from MongoDBClient import MongoDBClient
 from Request import get_fill_data_doc
 from Request_data import headers, login_data, url
 
@@ -24,7 +24,7 @@ def mark_first_filling(param: bool) -> bool:
             return True
 
 
-class AutoDBFiller(MongoDBExporter):
+class AutoDBFiller(MongoDBClient):
     def __init__(self):
         super().__init__()
         self.thread = Thread()
@@ -68,6 +68,3 @@ class AutoDBFiller(MongoDBExporter):
     def disable_realtime_data_collection(self):
         self.thread_is_running = False
         self.thread.join()
-
-
-filler = AutoDBFiller()

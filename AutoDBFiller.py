@@ -71,4 +71,3 @@ class AutoDBFiller(MongoDBExporter):
 
 
 filler = AutoDBFiller()
-filler.enable_realtime_data_collection(100)

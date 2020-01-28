@@ -65,7 +65,7 @@ for list_of_values in list_of_lists_of_values:
         continue
     list_of_values.pop(len(list_of_values) - 1)
     list_of_lists_of_measurements.append(filler.get_list_of_numbers(list_of_values))
-
+changes = True
 error_in_estimate = 0.3
 error_in_measurement = 0.1
 for measurements in list_of_lists_of_measurements:

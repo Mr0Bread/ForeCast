@@ -25,8 +25,8 @@ def mark_first_filling(param: bool) -> bool:
 
 
 class AutoDBFiller(MongoDBClient):
-    def __init__(self):
-        super().__init__()
+    def __init__(self,  main_database_name: str, time_database_name: str):
+        super().__init__(main_database_name, time_database_name)
         self.thread = Thread()
         self.thread_is_running = False
         self.data = []

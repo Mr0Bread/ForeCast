@@ -3,11 +3,11 @@ from os.path import isfile
 
 
 class MongoDBClient:
-    def __init__(self):
+    def __init__(self, main_database_name: str, time_database_name: str):
         self.my_client = pymongo.MongoClient(
             "mongodb+srv://Mr0Bread:Elishka1Love@forecastcluster-ruxkg.gcp.mongodb.net/test?retryWrites=true&w=majority")
-        self.main_database = self.my_client['MeteoInfoTable']
-        self.time_database = self.my_client['LastInsertTable']
+        self.main_database = self.my_client[main_database_name]
+        self.time_database = self.my_client[time_database_name]
         self.is_it_first_filling = self.is_not_first_filling_made()
 
     def is_not_first_filling_made(self):
@@ -151,6 +151,15 @@ class MongoDBClient:
             __list.append(__temp_list)
             __temp_list = []
         return __list
+
+    @staticmethod
+    def get_list_of_station_names(data_list: list) -> list:
+        list_of_station_names = []
+
+        for list_of_dicts in data_list:
+            list_of_station_names.append(list_of_dicts[0]['Station'])
+
+        return list_of_station_names
 
     @staticmethod
     def zip_time_and_values(list_of_values_lists: list, list_of_time_lists: list) -> list:

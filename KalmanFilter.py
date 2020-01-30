@@ -1,4 +1,5 @@
 from AutoDBFiller import AutoDBFiller
+from datetime import datetime
 
 
 class KalmanFilter:
@@ -55,10 +56,11 @@ class KalmanFilter:
         return __list_of_estimates
 
 
-filler = AutoDBFiller()
+filler = AutoDBFiller('MeteoInfoTable', 'LastInsertTable')
 main_info = filler.get_list_of_info_from_main_database()
 list_of_lists_of_values = filler.get_list_of_values(main_info, 'Dew Point')
 list_of_lists_of_measurements = []
+list_of_station_names = filler.get_list_of_station_names(main_info)
 
 for list_of_values in list_of_lists_of_values:
     if '-' in list_of_values or '' in list_of_values:
@@ -68,10 +70,22 @@ for list_of_values in list_of_lists_of_values:
 changes = True
 error_in_estimate = 0.3
 error_in_measurement = 0.1
-for measurements in list_of_lists_of_measurements:
-    print(measurements)
 
-    initial_estimate = measurements[len(measurements) - 1] + (
-            measurements[len(measurements) - 1] - measurements[len(measurements) - 2])
-    kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
-    print(kf.get_list_of_estimates())
+with open('estimation_log.txt', mode='a', encoding='utf-8') as file:
+    file.write(str(datetime.now()) + '\n\n')
+    for measurements, station_name in zip(list_of_lists_of_measurements, list_of_station_names):
+        file.write(str(station_name) + '\n')
+        for measurement in measurements:
+            file.write(str(measurement) + ' , ')
+        else:
+            file.write('\n')
+
+        initial_estimate = measurements[len(measurements) - 1] + (
+                measurements[len(measurements) - 1] - measurements[len(measurements) - 2])
+        kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
+        for estimate in kf.get_list_of_estimates():
+            file.write(str(estimate) + ' , ')
+        else:
+            file.write('\n\n')
+    else:
+        file.write('\n\n\n')

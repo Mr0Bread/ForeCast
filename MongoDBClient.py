@@ -6,8 +6,10 @@ class MongoDBClient:
     def __init__(self, main_database_name: str, time_database_name: str):
         self.my_client = pymongo.MongoClient(
             "mongodb+srv://Mr0Bread:Elishka1Love@forecastcluster-ruxkg.gcp.mongodb.net/test?retryWrites=true&w=majority")
-        self.main_database = self.my_client[main_database_name]
-        self.time_database = self.my_client[time_database_name]
+        self.main_database_name = main_database_name
+        self.main_database = self.my_client[self.main_database_name]
+        self.time_database_name = time_database_name
+        self.time_database = self.my_client[self.time_database_name]
         self.is_it_first_filling = self.is_not_first_filling_made()
 
     def is_not_first_filling_made(self):
@@ -107,7 +109,7 @@ class MongoDBClient:
         print('Filling time database')
         if self.is_time_database_exists():
             print(' Deleting obsolete time database')
-            self.delete_database('LastInsertTable')
+            self.delete_database(self.time_database_name)
 
         for data_dict in fill_data:
             collection = self.time_database[data_dict['Station']]
@@ -115,11 +117,11 @@ class MongoDBClient:
 
     def is_time_database_exists(self) -> bool:
         database_list = self.my_client.list_database_names()
-        if 'LastInsertTable' in database_list:
-            print('LastInsertTable exists')
+        if self.time_database_name in database_list:
+            print('{} exists'.format(self.time_database_name))
             return True
         else:
-            print('LastInsertTable doesn\'t exists')
+            print('{} doesn\'t exists'.format(self.time_database_name))
             return False
 
     def delete_database(self, database_name: str):

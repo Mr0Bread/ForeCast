@@ -9,10 +9,10 @@ class KalmanFilter:
         super().__init__()
         self.__number_of_tracked_values = number_of_tracked_values
         self.__measurements = __measurements
-        self.__measurement = None
         self.__estimate = __initial_estimate
         self.__error_in_estimate = initial_error_in_estimate
         self.__error_in_measurement = __error_in_measurement
+        self.__measurement = None
         self.__kalman_gain = None
 
     def set_measurements(self, __measurements):
@@ -59,33 +59,45 @@ class KalmanFilter:
 filler = AutoDBFiller('MeteoInfoTable', 'LastInsertTable')
 main_info = filler.get_list_of_info_from_main_database()
 list_of_lists_of_values = filler.get_list_of_values(main_info, 'Dew Point')
-list_of_lists_of_measurements = []
+list_of_lists_of_measurements = filler.get_list_of_lists_of_measurements(list_of_lists_of_values)
 list_of_station_names = filler.get_list_of_station_names(main_info)
+list_of_lists_of_estimates = []
 
-for list_of_values in list_of_lists_of_values:
-    if '-' in list_of_values or '' in list_of_values:
-        continue
-    list_of_values.pop(len(list_of_values) - 1)
-    list_of_lists_of_measurements.append(filler.get_list_of_numbers(list_of_values))
-changes = True
 error_in_estimate = 0.3
 error_in_measurement = 0.1
 
-with open('estimation_log.txt', mode='a', encoding='utf-8') as file:
-    file.write(str(datetime.now()) + '\n\n')
-    for measurements, station_name in zip(list_of_lists_of_measurements, list_of_station_names):
-        file.write(str(station_name) + '\n')
-        for measurement in measurements:
-            file.write(str(measurement) + ' , ')
-        else:
-            file.write('\n')
+for measurements in list_of_lists_of_measurements:
+    initial_estimate = measurements[-1] + (
+            measurements[-1] - measurements[-2])
+    kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
+    list_of_lists_of_estimates.append(kf.get_list_of_estimates())
 
-        initial_estimate = measurements[len(measurements) - 1] + (
-                measurements[len(measurements) - 1] - measurements[len(measurements) - 2])
-        kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
-        for estimate in kf.get_list_of_estimates():
-            file.write(str(estimate) + ' , ')
+
+def write_data_to_file(file_name: str, __list_of_lists_of_measurements: list,
+                       __list_of_lists_of_estimates: list,
+                       __list_of_station_names: list, mode: str = 'a', encoding: str = 'utf-8'):
+    with open(file_name, mode=mode, encoding=encoding) as file:
+        file.write(str(datetime.now()) + '\n\n')
+
+        for station_name, __measurements, estimates in zip(__list_of_station_names, __list_of_lists_of_measurements,
+                                                           __list_of_lists_of_estimates):
+            file.write(str(station_name) + '\n')
+
+            for measurement in __measurements:
+                file.write(str(measurement) + ' , ')
+            else:
+                file.write('\n')
+
+            for estimate in estimates:
+                file.write(str(estimate) + ' , ')
+            else:
+                file.write('\n\n')
+
+            file.write('Last estimate: {}\n'.format(estimates[-2]))
+            file.write('True value: {}\n\n'.format(measurements[-1]))
         else:
-            file.write('\n\n')
-    else:
-        file.write('\n\n\n')
+            file.write('\n\n\n')
+
+
+write_data_to_file('estimation_log.txt', list_of_lists_of_measurements, list_of_lists_of_estimates,
+                   list_of_station_names)

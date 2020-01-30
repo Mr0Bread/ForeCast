@@ -65,6 +65,17 @@ class AutoDBFiller(MongoDBClient):
 
                 print(' collecting finished')
 
+    def get_list_of_lists_of_measurements(self, __list_of_lists_of_values: list) -> list:
+        list_of_lists_of_measurements = []
+
+        for list_of_values in __list_of_lists_of_values:
+            if '-' in list_of_values or '' in list_of_values:
+                continue
+            list_of_values.pop(len(list_of_values) - 1)
+            list_of_lists_of_measurements.append(self.get_list_of_numbers(list_of_values))
+
+        return list_of_lists_of_measurements
+
     def disable_realtime_data_collection(self):
         self.thread_is_running = False
         self.thread.join()

@@ -1,5 +1,5 @@
 from AutoDBFiller import AutoDBFiller
-from datetime import datetime
+from FileHandler import FileHandler
 
 
 class KalmanFilter:
@@ -72,32 +72,5 @@ for measurements in list_of_lists_of_measurements:
     kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
     list_of_lists_of_estimates.append(kf.get_list_of_estimates())
 
-
-def write_data_to_file(file_name: str, __list_of_lists_of_measurements: list,
-                       __list_of_lists_of_estimates: list,
-                       __list_of_station_names: list, mode: str = 'a', encoding: str = 'utf-8'):
-    with open(file_name, mode=mode, encoding=encoding) as file:
-        file.write(str(datetime.now()) + '\n\n')
-
-        for station_name, __measurements, estimates in zip(__list_of_station_names, __list_of_lists_of_measurements,
-                                                           __list_of_lists_of_estimates):
-            file.write(str(station_name) + '\n')
-
-            for measurement in __measurements:
-                file.write(str(measurement) + ' , ')
-            else:
-                file.write('\n')
-
-            for estimate in estimates:
-                file.write(str(estimate) + ' , ')
-            else:
-                file.write('\n\n')
-
-            file.write('Last estimate: {}\n'.format(estimates[-2]))
-            file.write('True value: {}\n\n'.format(measurements[-1]))
-        else:
-            file.write('\n\n\n')
-
-
-write_data_to_file('estimation_log.txt', list_of_lists_of_measurements, list_of_lists_of_estimates,
-                   list_of_station_names)
+FileHandler.write_a_set_of_data_to_file('estimation_log.txt', list_of_lists_of_measurements, list_of_lists_of_estimates,
+                                        list_of_station_names)

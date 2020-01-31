@@ -129,30 +129,30 @@ class MongoDBClient:
 
     def get_list_of_info_from_main_database(self) -> list:
         collection_names = self.main_database.list_collection_names()
-        __list = []
+        list_of_info = []
         temp_list = []
         for name in collection_names:
             for search_result in self.main_database[name].find():
                 search_result.pop('_id')
                 search_result['Station'] = name
                 temp_list.append(search_result)
-            __list.append(temp_list)
+            list_of_info.append(temp_list)
             temp_list = []
 
-        return __list
+        return list_of_info
 
     @staticmethod
     def get_list_of_values(data_list: list, value_name: str) -> list:
-        __list = []
-        __temp_list = []
+        list_of_values = []
+        temp_list = []
         for list_of_dicts in data_list:
             for data_dict in list_of_dicts:
-                __temp_list.append(data_dict[value_name])
+                temp_list.append(data_dict[value_name])
             else:
-                __temp_list.append(data_dict['Station'])
-            __list.append(__temp_list)
-            __temp_list = []
-        return __list
+                temp_list.append(data_dict['Station'])
+            list_of_values.append(temp_list)
+            temp_list = []
+        return list_of_values
 
     @staticmethod
     def get_list_of_station_names(data_list: list) -> list:
@@ -165,51 +165,51 @@ class MongoDBClient:
 
     @staticmethod
     def zip_time_and_values(list_of_values_lists: list, list_of_time_lists: list) -> list:
-        __list = []
-        __temp_list1 = []
-        __temp_list2 = []
-        __temp_list3 = []
+        zipped_list = []
+        temp_list1 = []
+        temp_list2 = []
+        temp_list3 = []
         station_names = []
 
         for list_of_values in list_of_values_lists:
             station_names.append(list_of_values[len(list_of_values) - 1])
             list_of_values.pop(len(list_of_values) - 1)
-            __temp_list1.append(list_of_values)
+            temp_list1.append(list_of_values)
         else:
             for list_of_time in list_of_time_lists:
                 list_of_time.pop(len(list_of_time) - 1)
-                __temp_list2.append(list_of_time)
+                temp_list2.append(list_of_time)
 
-            for value, time, station_name in zip(__temp_list1, __temp_list2, station_names):
-                __temp_list3.append(station_name)
-                __temp_list3.append(value)
-                __temp_list3.append(time)
-                __list.append(__temp_list3)
-                __temp_list3 = []
+            for value, time, station_name in zip(temp_list1, temp_list2, station_names):
+                temp_list3.append(station_name)
+                temp_list3.append(value)
+                temp_list3.append(time)
+                zipped_list.append(temp_list3)
+                temp_list3 = []
 
-        return __list
+        return zipped_list
 
     @staticmethod
     def get_corresponding_list_of_time(data_list: list) -> list:
-        __list = []
-        __temp_list = []
+        list_of_time = []
+        temp_list = []
         for list_of_dicts in data_list:
             for data_dict in list_of_dicts:
-                __temp_list.append(data_dict['Time'])
+                temp_list.append(data_dict['Time'])
             else:
-                __temp_list.append(data_dict['Station'])
-            __list.append(__temp_list)
-            __temp_list = []
-        return __list
+                temp_list.append(data_dict['Station'])
+            list_of_time.append(temp_list)
+            temp_list = []
+        return list_of_time
 
     @staticmethod
     def get_list_of_numbers(list_of_values: list) -> list:
-        __list = []
+        list_of_numbers = []
 
         for value in list_of_values:
             try:
-                __list.append(float(value))
+                list_of_numbers.append(float(value))
             except ValueError:
-                __list.append('-')
+                list_of_numbers.append('-')
 
-        return __list
+        return list_of_numbers

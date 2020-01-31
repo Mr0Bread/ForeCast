@@ -39,38 +39,18 @@ class KalmanFilter:
         self.__error_in_estimate = self.__calculate_error_in_estimate()
 
     def get_current_estimate(self):
-        for __measurement in self.__measurements:
-            self.__measurement = __measurement
+        for measurement in self.__measurements:
+            self.__measurement = measurement
             self.make_basic_calculations()
 
         else:
             return self.__estimate
 
     def get_list_of_estimates(self) -> list:
-        __list_of_estimates = []
-        for __measurement in self.__measurements:
-            self.__measurement = __measurement
+        list_of_estimates = []
+        for measurement in self.__measurements:
+            self.__measurement = measurement
             self.make_basic_calculations()
-            __list_of_estimates.append(self.__estimate)
+            list_of_estimates.append(self.__estimate)
 
-        return __list_of_estimates
-
-
-filler = AutoDBFiller('MeteoInfoTable', 'LastInsertTable')
-main_info = filler.get_list_of_info_from_main_database()
-list_of_lists_of_values = filler.get_list_of_values(main_info, 'Dew Point')
-list_of_lists_of_measurements = filler.get_list_of_lists_of_measurements(list_of_lists_of_values)
-list_of_station_names = filler.get_list_of_station_names(main_info)
-list_of_lists_of_estimates = []
-
-error_in_estimate = 0.3
-error_in_measurement = 0.1
-
-for measurements in list_of_lists_of_measurements:
-    initial_estimate = measurements[-1] + (
-            measurements[-1] - measurements[-2])
-    kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
-    list_of_lists_of_estimates.append(kf.get_list_of_estimates())
-
-FileHandler.write_a_set_of_data_to_file('estimation_log.txt', list_of_lists_of_measurements, list_of_lists_of_estimates,
-                                        list_of_station_names)
+        return list_of_estimates

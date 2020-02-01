@@ -25,7 +25,7 @@ def mark_first_filling(param: bool) -> bool:
 
 
 class AutoDBFiller(MongoDBClient):
-    def __init__(self,  main_database_name: str, time_database_name: str):
+    def __init__(self, main_database_name: str, time_database_name: str):
         super().__init__(main_database_name, time_database_name)
         self.thread = Thread()
         self.thread_is_running = False
@@ -64,17 +64,6 @@ class AutoDBFiller(MongoDBClient):
                     print('  Another filling completed')
 
                 print(' collecting finished')
-
-    def get_list_of_lists_of_measurements(self, __list_of_lists_of_values: list) -> list:
-        list_of_lists_of_measurements = []
-
-        for list_of_values in __list_of_lists_of_values:
-            if '-' in list_of_values or '' in list_of_values:
-                continue
-            list_of_values.pop(len(list_of_values) - 1)
-            list_of_lists_of_measurements.append(self.get_list_of_numbers(list_of_values))
-
-        return list_of_lists_of_measurements
 
     def disable_realtime_data_collection(self):
         self.thread_is_running = False

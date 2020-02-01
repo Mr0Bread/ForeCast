@@ -61,7 +61,7 @@ class DataHandler:
         return list_of_station_names
 
     @staticmethod
-    def get_list_of_values(data_list: list, value_name: str) -> list:
+    def get_list_of_chosen_values(data_list: list, value_name: str) -> list:
         list_of_values = []
         temp_list = []
 
@@ -76,7 +76,7 @@ class DataHandler:
         return list_of_values
 
     @staticmethod
-    def get_list_of_lists_of_measurements(list_of_lists_of_values: list) -> list:
+    def get_list_of_lists_of_real_measurements(list_of_lists_of_values: list) -> list:
         list_of_lists_of_measurements = []
 
         for list_of_values in list_of_lists_of_values:
@@ -86,3 +86,4 @@ class DataHandler:
             list_of_lists_of_measurements.append(DataHandler.get_list_of_numbers(list_of_values))
 
         return list_of_lists_of_measurements
+

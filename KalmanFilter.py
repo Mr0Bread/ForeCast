@@ -50,3 +50,8 @@ class KalmanFilter:
             list_of_estimates.append(self.__estimate)
 
         return list_of_estimates
+
+    @staticmethod
+    def get_initial_estimate_based_on_last_measurements(measurements: list) -> float:
+        return measurements[-1] + (
+                measurements[-1] - measurements[-2])

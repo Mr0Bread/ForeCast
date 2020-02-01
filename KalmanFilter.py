@@ -1,7 +1,3 @@
-from AutoDBFiller import AutoDBFiller
-from FileHandler import FileHandler
-
-
 class KalmanFilter:
 
     def __init__(self, initial_error_in_estimate, __initial_estimate, __error_in_measurement, __measurements,

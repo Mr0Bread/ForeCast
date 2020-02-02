@@ -1,14 +1,14 @@
 class DataHandler:
 
     @staticmethod
-    def get_list_of_numbers(list_of_values: list) -> list:
+    def get_list_of_float_numbers(list_of_values: list) -> list:
         list_of_numbers = []
 
         for value in list_of_values:
             try:
                 list_of_numbers.append(float(value))
             except ValueError:
-                list_of_numbers.append('-')
+                list_of_numbers.append(value)
 
         return list_of_numbers
 
@@ -52,11 +52,11 @@ class DataHandler:
         return zipped_list
 
     @staticmethod
-    def get_list_of_station_names(data_list: list) -> list:
+    def get_list_of_station_names(list_of_lists_of_data: list) -> list:
         list_of_station_names = []
 
-        for list_of_dicts in data_list:
-            list_of_station_names.append(list_of_dicts[0]['Station'])
+        for list_of_data in list_of_lists_of_data:
+            list_of_station_names.append(list_of_data[-1])
 
         return list_of_station_names
 
@@ -76,14 +76,37 @@ class DataHandler:
         return list_of_values
 
     @staticmethod
-    def get_list_of_lists_of_real_measurements(list_of_lists_of_values: list) -> list:
+    def get_list_of_lists_of_measurements_with_station_names(list_of_lists_of_values: list) -> list:
         list_of_lists_of_measurements = []
 
         for list_of_values in list_of_lists_of_values:
             if '-' in list_of_values or '' in list_of_values:
                 continue
-            list_of_values.pop(len(list_of_values) - 1)
-            list_of_lists_of_measurements.append(DataHandler.get_list_of_numbers(list_of_values))
+            list_of_lists_of_measurements.append(DataHandler.get_list_of_float_numbers(list_of_values))
 
         return list_of_lists_of_measurements
+
+    @staticmethod
+    def get_list_of_lists_of_measurements_without_station_names(list_of_lists_of_measurements_with_station_names: list) -> list:
+        list_of_lists_of_measurements_without_station_names = []
+
+        for list_of_measurements in list_of_lists_of_measurements_with_station_names:
+            list_of_measurements.pop(len(list_of_measurements) - 1)
+            list_of_lists_of_measurements_without_station_names.append(list_of_measurements)
+
+        return list_of_lists_of_measurements_without_station_names
+
+    @staticmethod
+    def get_prepared_lists_for_estimation(main_info) -> tuple:
+        lists_of_values: list = DataHandler.get_list_of_lists_of_chosen_values(main_info, 'Dew Point')
+        lists_of_measurements_with_station_names: list = DataHandler.get_list_of_lists_of_measurements_with_station_names(
+            lists_of_values)
+        list_of_station_names = DataHandler.get_list_of_station_names(lists_of_measurements_with_station_names)
+        lists_of_measurements_without_station_names: list = DataHandler.get_list_of_lists_of_measurements_without_station_names(
+            lists_of_measurements_with_station_names)
+        lists_of_measurements: list = lists_of_measurements_without_station_names.copy()
+        del lists_of_measurements_with_station_names
+        del lists_of_measurements_without_station_names
+
+        return lists_of_measurements, list_of_station_names
 

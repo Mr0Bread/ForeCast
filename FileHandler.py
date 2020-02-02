@@ -9,9 +9,9 @@ class FileHandler:
                                     list_of_station_names: list, mode: str = 'a', encoding: str = 'utf-8'):
         with open(file_name, mode=mode, encoding=encoding) as file:
             file.write(str(datetime.now()) + '\n\n')
-
             for station_name, measurements, estimates in zip(list_of_station_names, list_of_lists_of_measurements,
                                                              list_of_lists_of_estimates):
+
                 file.write(str(station_name) + '\n')
 
                 for measurement in measurements:

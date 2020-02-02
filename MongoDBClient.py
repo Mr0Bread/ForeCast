@@ -127,7 +127,7 @@ class MongoDBClient:
     def delete_database(self, database_name: str):
         self.my_client.drop_database(database_name)
 
-    def get_list_of_info_from_main_database(self) -> list:
+    def get_info_from_main_database(self) -> list:
         collection_names = self.main_database.list_collection_names()
         list_of_info = []
         temp_list = []

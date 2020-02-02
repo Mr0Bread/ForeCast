@@ -61,11 +61,11 @@ class DataHandler:
         return list_of_station_names
 
     @staticmethod
-    def get_list_of_chosen_values(data_list: list, value_name: str) -> list:
+    def get_list_of_lists_of_chosen_values(list_of_lists_of_dicts: list, value_name: str) -> list:
         list_of_values = []
         temp_list = []
 
-        for list_of_dicts in data_list:
+        for list_of_dicts in list_of_lists_of_dicts:
             for data_dict in list_of_dicts:
                 temp_list.append(data_dict[value_name])
             else:

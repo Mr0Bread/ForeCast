@@ -24,6 +24,7 @@ class AutoDBFiller(MongoDBClient):
         self.thread = Thread(target=self.collect_data_in_realtime(update_frequency_in_seconds))
         print('starting thread')
         self.thread.start()
+        return
 
     def collect_data_in_realtime(self, update_frequency_in_seconds):
         print('creating session')

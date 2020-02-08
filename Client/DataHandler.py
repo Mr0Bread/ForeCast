@@ -98,8 +98,8 @@ class DataHandler:
         return list_of_lists_of_measurements_without_station_names
 
     @staticmethod
-    def get_prepared_lists_for_estimation(main_info) -> tuple:
-        lists_of_values: list = DataHandler.get_list_of_lists_of_chosen_values(main_info, 'Dew Point')
+    def get_prepared_lists_for_estimation(main_info, value: str = 'Dew Point') -> tuple:
+        lists_of_values: list = DataHandler.get_list_of_lists_of_chosen_values(main_info, value)
 
         lists_of_measurements_with_station_names: list = DataHandler.get_list_of_lists_of_measurements_with_station_names(
             lists_of_values)

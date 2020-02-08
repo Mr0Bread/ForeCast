@@ -3,8 +3,8 @@ from time import sleep
 from os import remove
 from os.path import isfile
 
-from MongoDBClient import MongoDBClient
-from Request import Request
+from Client.MongoDBClient import MongoDBClient
+from Client.Request import Request
 
 
 class AutoDBFiller(MongoDBClient):

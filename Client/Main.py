@@ -1,17 +1,18 @@
-from KalmanFilter import KalmanFilter
-from FileHandler import FileHandler
-from AutoDBFiller import AutoDBFiller
-from DataHandler import DataHandler
-from GraphEditor import GraphEditor
+from Client.KalmanFilter import KalmanFilter
+from Client.FileHandler import FileHandler
+from Client.AutoDBFiller import AutoDBFiller
+from Client.DataHandler import DataHandler
+from Client.GraphEditor import GraphEditor
 
 if __name__ == '__main__':
     filler = AutoDBFiller('MeteoInfoTable2', 'LastInsertTable2')
     main_info = filler.get_info_from_main_database()
+    value_to_estimate = 'Dew Point'
 
-    lists_of_measurements, station_names = DataHandler.get_prepared_lists_for_estimation(main_info)
+    lists_of_measurements, station_names = DataHandler.get_prepared_lists_for_estimation(main_info, value_to_estimate)
     lists_of_estimates: list = []
 
-    error_in_estimate = 0.3
+    error_in_estimate = 0.1
     error_in_measurement = 0.1
 
     for measurements in lists_of_measurements:
@@ -23,4 +24,4 @@ if __name__ == '__main__':
                                             lists_of_estimates,
                                             station_names)
 
-    GraphEditor.create_plots(lists_of_estimates, lists_of_measurements, station_names)
+    GraphEditor.create_twolined_plot(lists_of_estimates, lists_of_measurements, value_to_estimate)

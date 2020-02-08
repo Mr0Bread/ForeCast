@@ -2,7 +2,9 @@
   <dictionary name="Mr0Bread">
     <words>
       <w>asker</w>
+      <w>multilined</w>
       <w>suptitle</w>
+      <w>twolined</w>
     </words>
   </dictionary>
 </component>

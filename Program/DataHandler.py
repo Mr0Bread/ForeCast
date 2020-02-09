@@ -130,3 +130,101 @@ class DataHandler:
                 dict_of_accuracy[station_name] = sqrt((sum_of_differences ** 2) / number_of_estimations)
 
         return dict_of_accuracy
+
+    @staticmethod
+    def get_json(lists_of_values):
+        json_dict = {}
+        temp_list = []
+
+        for list_of_values in lists_of_values:
+            for value in list_of_values[0:-2]:
+                temp_list.append(value)
+            else:
+                json_dict[list_of_values[-1]] = temp_list
+                temp_list = []
+
+        return json_dict
+
+    @staticmethod
+    def get_json_of_existing_values():
+        return {'Values': ['Station',
+                           'Time',
+                           'Air Temperature',
+                           'Air Temperature(-1 h)',
+                           'Humidity',
+                           'Dew Point',
+                           'Precipitation',
+                           'Intensity',
+                           'Visibility',
+                           'Road Temperature',
+                           'Road Temperature(-1 h)',
+                           'Road Condition',
+                           'Road Warning',
+                           'Freezing Point',
+                           'Road Temperature 2',
+                           'Road Temperature 2(-1 h)',
+                           'Road Condition 2',
+                           'Road Warning 2',
+                           'Freezing Point 2']}
+
+    @staticmethod
+    def get_json_of_station_names():
+        return {'Stations': ['A1 km 12 Ādaži',
+                             'A1 km 21 Lilaste',
+                             'A1 km 39 Skulte',
+                             'A1 km 45 Dunte',
+                             'A1 km 57 Tūja',
+                             'A1 km 71 Vitrupe',
+                             'A1 km 9 Ādaži',
+                             'A1 km 97 Ainaži',
+                             'A10 km 104 Talsi',
+                             'A10 km 138 Usma',
+                             'A10 km 169 Pope',
+                             'A10 km 17 Jūrmala',
+                             'A10 km 36 Sloka',
+                             'A10 km 45 Ķemeri',
+                             'A10 km 80 Pūre',
+                             'A11 km 38 Nīca',
+                             'A12 km 155 Zilupe',
+                             'A12 km 38 Atašiene',
+                             'A12 km 68 Viļāni',
+                             'A12 km 96 Rēzekne',
+                             'A13 km 11 Kārsava',
+                             'A13 km 81 Feimaņi',
+                             'A2 km 102 Rauna',
+                             'A2 km 126 Smiltene',
+                             'A2 km 156 Vireši',
+                             'A2 km 27 Garkalne',
+                             'A2 km 57 Sigulda',
+                             'A2 km 76 Melturi',
+                             'A3 km 102 Strenči',
+                             'A3 km 24 Inciems',
+                             'A3 km 41 Stalbe',
+                             'A3 km 62 Valmiera',
+                             'A4 km 7 Mucenieki',
+                             'A5 km 23 Apvedceļš',
+                             'A5 km 8 Ķekava',
+                             'A6 km 109 Ādmiņi',
+                             'A6 km 163 Līvāni',
+                             'A6 km 200 Nīcgale',
+                             'A6 km 22 Saulkalne',
+                             'A6 km 236 Daugavpils',
+                             'A6 km 280 Krāslava',
+                             'A6 km 63 Kaibala',
+                             'A7 km 32 Bērziņi',
+                             'A7 km 53 Zariņi',
+                             'A7 km 71 Ceraukste',
+                             'A7 km 82 Grenctāle',
+                             'A8 km 27 Dalbe',
+                             'A8 km 43 Vircava',
+                             'A8 km 72 Eleja',
+                             'A9 km 113 Saldus',
+                             'A9 km 13 Lāči',
+                             'A9 km 138 Rudbārži',
+                             'A9 km 154 Kalvene',
+                             'A9 km 178 Durbe',
+                             'A9 km 24 Kalnciems',
+                             'A9 km 39 Apšupe',
+                             'A9 km 62 Annenieki',
+                             'P80 km 13 Ogresgals',
+                             'P80 km 35 Zādzene']}

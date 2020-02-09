@@ -52,7 +52,7 @@ class DataHandler:
         return zipped_list
 
     @staticmethod
-    def get_list_of_station_names(list_of_lists_of_data: list) -> list:
+    def get_station_names(list_of_lists_of_data: list) -> list:
         list_of_station_names = []
 
         for list_of_data in list_of_lists_of_data:
@@ -61,11 +61,11 @@ class DataHandler:
         return list_of_station_names
 
     @staticmethod
-    def get_list_of_lists_of_chosen_values(list_of_lists_of_dicts: list, value_name: str) -> list:
+    def get_lists_of_chosen_values(lists_of_dicts: list, value_name: str) -> list:
         list_of_values = []
         temp_list = []
 
-        for list_of_dicts in list_of_lists_of_dicts:
+        for list_of_dicts in lists_of_dicts:
             for data_dict in list_of_dicts:
                 temp_list.append(data_dict[value_name])
             else:
@@ -76,7 +76,7 @@ class DataHandler:
         return list_of_values
 
     @staticmethod
-    def get_list_of_lists_of_measurements_with_station_names(lists_of_values: list) -> list:
+    def get_lists_of_measurements_with_station_names(lists_of_values: list) -> list:
         lists_of_measurements = []
 
         for list_of_values in lists_of_values:
@@ -87,7 +87,7 @@ class DataHandler:
         return lists_of_measurements
 
     @staticmethod
-    def get_list_of_lists_of_measurements_without_station_names(
+    def get_lists_of_measurements_without_station_names(
             list_of_lists_of_measurements_with_station_names: list) -> list:
         list_of_lists_of_measurements_without_station_names = []
 
@@ -99,16 +99,34 @@ class DataHandler:
 
     @staticmethod
     def get_prepared_lists_for_estimation(main_info, value: str = 'Dew Point') -> tuple:
-        lists_of_values: list = DataHandler.get_list_of_lists_of_chosen_values(main_info, value)
+        lists_of_values: list = DataHandler.get_lists_of_chosen_values(main_info, value)
 
-        lists_of_measurements_with_station_names: list = DataHandler.get_list_of_lists_of_measurements_with_station_names(
+        lists_of_measurements_with_station_names: list = DataHandler.get_lists_of_measurements_with_station_names(
             lists_of_values)
 
-        list_of_station_names = DataHandler.get_list_of_station_names(lists_of_measurements_with_station_names)
+        list_of_station_names = DataHandler.get_station_names(lists_of_measurements_with_station_names)
 
-        lists_of_measurements_without_station_names: list = DataHandler.get_list_of_lists_of_measurements_without_station_names(
+        lists_of_measurements_without_station_names: list = DataHandler.get_lists_of_measurements_without_station_names(
             lists_of_measurements_with_station_names)
 
         lists_of_measurements: list = lists_of_measurements_without_station_names.copy()
 
         return lists_of_measurements, list_of_station_names
+
+    @staticmethod
+    def get_estimation_accuracy(lists_of_estimates: list, lists_of_measurements: list, station_names: list):
+        from math import sqrt
+
+        dict_of_accuracy = {}
+
+        number_of_estimations = len(lists_of_measurements)
+
+        for estimates, measurements, station_name in zip(lists_of_estimates, lists_of_measurements, station_names):
+            sum_of_differences = 0
+
+            for estimate, measurement in zip(estimates, measurements):
+                sum_of_differences += estimate - measurement
+            else:
+                dict_of_accuracy[station_name] = sqrt((sum_of_differences ** 2) / number_of_estimations)
+
+        return dict_of_accuracy

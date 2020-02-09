@@ -1,5 +1,5 @@
-from Client.AutoDBFiller import AutoDBFiller
-from Client.Asker import Asker
+from Program.AutoDBFiller import AutoDBFiller
+from Program.Asker import Asker
 from os import system
 
 

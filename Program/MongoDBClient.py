@@ -7,9 +7,9 @@ class MongoDBClient:
         self.my_client = pymongo.MongoClient(
             "mongodb+srv://Mr0Bread:Elishka1Love@forecastcluster-ruxkg.gcp.mongodb.net/test?retryWrites=true&w=majority")
         self.main_database_name = main_database_name
-        self.main_database = self.my_client[self.main_database_name]
+        self.__main_database = self.my_client[self.main_database_name]
         self.time_database_name = time_database_name
-        self.time_database = self.my_client[self.time_database_name]
+        self.__time_database = self.my_client[self.time_database_name]
         self.is_it_first_filling = self.is_not_first_filling_made()
 
     def is_not_first_filling_made(self):
@@ -41,24 +41,24 @@ class MongoDBClient:
                     return False
 
     def clear_collection(self, coll_name: str):
-        self.main_database.drop_collection(coll_name)
+        self.__main_database.drop_collection(coll_name)
 
     def clear_all_collections(self, coll_names: list):
         for name in coll_names:
-            self.main_database.drop_collection(name)
+            self.__main_database.drop_collection(name)
 
     def get_collection(self, coll_name: str):
-        return self.main_database[coll_name]
+        return self.__main_database[coll_name]
 
     def update_collection(self, coll_name: str, fill_data: dict):
         collection = self.get_collection(coll_name)
         collection.insert(fill_data)
 
     def delete_collection(self, coll_name: str):
-        self.main_database[coll_name].drop()
+        self.__main_database[coll_name].drop()
 
     def get_collection_names(self) -> list:
-        return self.main_database.list_collection_names()
+        return self.__main_database.list_collection_names()
 
     def fill_main_database(self, fill_data: list):
         for data_dict in fill_data:
@@ -67,7 +67,7 @@ class MongoDBClient:
     def fill_collection(self, data_dict: dict, coll_name: str):
         data_dict.pop('Station')
 
-        collection = self.main_database[coll_name]
+        collection = self.__main_database[coll_name]
         collection.insert_one(data_dict)
 
     def get_relevant_fill_data_doc(self, fill_data: list) -> list:
@@ -85,12 +85,12 @@ class MongoDBClient:
 
     def update_time_database(self, fill_data: list):
         for data_dict in fill_data:
-            collection = self.time_database[data_dict['Station']]
+            collection = self.__time_database[data_dict['Station']]
             collection.drop()
             collection.insert_one({'Time': data_dict['Time'], 'Date': data_dict['Date']})
 
     def is_imported_row_relevant(self, data_dict: dict) -> bool:
-        collection = self.time_database[data_dict['Station']]
+        collection = self.__time_database[data_dict['Station']]
         search_result = collection.find({}, {'_id': 0, 'Time': 1, 'Date': 1})
 
         for selected_row in search_result:
@@ -112,7 +112,7 @@ class MongoDBClient:
             self.delete_database(self.time_database_name)
 
         for data_dict in fill_data:
-            collection = self.time_database[data_dict['Station']]
+            collection = self.__time_database[data_dict['Station']]
             collection.insert_one({'Time': data_dict['Time'], 'Date': data_dict['Date']})
 
     def is_time_database_exists(self) -> bool:
@@ -128,11 +128,11 @@ class MongoDBClient:
         self.my_client.drop_database(database_name)
 
     def get_info_from_main_database(self) -> list:
-        collection_names = self.main_database.list_collection_names()
+        collection_names = self.__main_database.list_collection_names()
         list_of_info = []
         temp_list = []
         for name in collection_names:
-            for search_result in self.main_database[name].find():
+            for search_result in self.__main_database[name].find():
                 search_result.pop('_id')
                 search_result['Station'] = name
                 temp_list.append(search_result)
@@ -140,13 +140,3 @@ class MongoDBClient:
             temp_list = []
 
         return list_of_info
-
-
-
-
-
-
-
-
-
-

@@ -245,3 +245,31 @@ class DataHandler:
                 return False
             else:
                 return True
+
+    @staticmethod
+    def get_indexes_for_filling(list_of_values: list) -> tuple:
+
+        index = 0
+        adder = 1
+
+        indexes = []
+
+        while adder < 5 and index < len(list_of_values) - 1 and index + adder < len(list_of_values):
+            if adder == 1 and list_of_values[index] == '-' and list_of_values[index + 1] != '-':
+                indexes.append([index, 'one'])
+
+            if list_of_values[index] == '-' and list_of_values[index + adder] == '-':
+                adder += 1
+            elif adder != 1:
+                indexes.append([index - 1, index + adder, adder, 'normal'])
+                index += adder
+                adder = 1
+            else:
+                index += adder
+                adder = 1
+        else:
+            if adder != 1:
+                indexes.append([index - 1, index + adder - 1, adder, 'in the end'])
+
+        return tuple(indexes)
+

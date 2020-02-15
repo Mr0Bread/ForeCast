@@ -33,4 +33,4 @@ if __name__ == '__main__':
 
     list3 = [1, 1, 1, '-', '-', '-', '-', 1, '-', 1, '-', '-', '-', '-']
 
-    print(DataHandler.is_possible_to_fill_missing_data(list3))
+    print(DataHandler.get_indexes_for_filling(list3))

@@ -177,20 +177,6 @@ class DataHandler:
                              'A1 km 71 Vitrupe',
                              'A1 km 9 Ādaži',
                              'A1 km 97 Ainaži',
-                             'A10 km 104 Talsi',
-                             'A10 km 138 Usma',
-                             'A10 km 169 Pope',
-                             'A10 km 17 Jūrmala',
-                             'A10 km 36 Sloka',
-                             'A10 km 45 Ķemeri',
-                             'A10 km 80 Pūre',
-                             'A11 km 38 Nīca',
-                             'A12 km 155 Zilupe',
-                             'A12 km 38 Atašiene',
-                             'A12 km 68 Viļāni',
-                             'A12 km 96 Rēzekne',
-                             'A13 km 11 Kārsava',
-                             'A13 km 81 Feimaņi',
                              'A2 km 102 Rauna',
                              'A2 km 126 Smiltene',
                              'A2 km 156 Vireši',
@@ -226,5 +212,36 @@ class DataHandler:
                              'A9 km 24 Kalnciems',
                              'A9 km 39 Apšupe',
                              'A9 km 62 Annenieki',
+                             'A10 km 104 Talsi',
+                             'A10 km 138 Usma',
+                             'A10 km 169 Pope',
+                             'A10 km 17 Jūrmala',
+                             'A10 km 36 Sloka',
+                             'A10 km 45 Ķemeri',
+                             'A10 km 80 Pūre',
+                             'A11 km 38 Nīca',
+                             'A12 km 155 Zilupe',
+                             'A12 km 38 Atašiene',
+                             'A12 km 68 Viļāni',
+                             'A12 km 96 Rēzekne',
+                             'A13 km 11 Kārsava',
+                             'A13 km 81 Feimaņi',
                              'P80 km 13 Ogresgals',
                              'P80 km 35 Zādzene']}
+
+    @staticmethod
+    def is_possible_to_fill_missing_data(list_of_values: list) -> bool:
+        index = 0
+        adder = 1
+
+        while adder < 5 and index < len(list_of_values) - 1 and index + adder < len(list_of_values):
+            if list_of_values[index] == '-' and list_of_values[index + adder] == '-':
+                adder += 1
+            else:
+                index += adder
+                adder = 1
+        else:
+            if adder > 4:
+                return False
+            else:
+                return True

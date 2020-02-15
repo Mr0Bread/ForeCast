@@ -140,3 +140,12 @@ class MongoDBClient:
             temp_list = []
 
         return list_of_info
+
+    def get_data_from_collection(self, station_name: str) -> list:
+        list_of_info = []
+        for search_result in self.__main_database[station_name].find():
+            search_result.pop('_id')
+            search_result['Station'] = station_name
+            list_of_info.append(search_result)
+        else:
+            return list_of_info

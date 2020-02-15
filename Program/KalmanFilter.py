@@ -55,3 +55,7 @@ class KalmanFilter:
     def get_initial_estimate_based_on_last_measurements(measurements: list) -> float:
         return measurements[-1] + (
                 measurements[-1] - measurements[-2])
+
+    @staticmethod
+    def get_json_with_estimation():
+        pass

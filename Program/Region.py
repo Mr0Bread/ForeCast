@@ -1,2 +1,2 @@
-class Region():
+class Region:
     pass

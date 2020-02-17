@@ -65,7 +65,7 @@ class Request:
     @staticmethod
     def get_table(url='http://www.lvceli.lv/cms/'):
         with requests.session() as s:
-            r = s.post('http://www.lvceli.lv/cms/', data=login_data, headers=headers)
+            r = s.post(url, data=login_data, headers=headers)
 
         soup = BeautifulSoup(r.content, 'html5lib')
         return soup.find("table", attrs={"class": "norm", "id": "table-1"})

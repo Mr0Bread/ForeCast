@@ -1,17 +1,17 @@
 from Program.DataHandler import DataHandler
 from Program.KalmanFilter import KalmanFilter
 from Program.AutoDBFiller import AutoDBFiller
+from Program.GraphEditor import GraphEditor
 from Program.FileHandler import FileHandler
-from Program.MongoDBClient import MongoDBClient
-from Program.Station import Station
+from Program.MySQLClient import MySQLClient
 
 if __name__ == '__main__':
-    filler = AutoDBFiller('MeteoInfoTable2', 'LastInsertTable2')
-    main_info = filler.get_info_from_main_database()
-
-    # value_to_estimate = 'Dew Point'
+    # graph_editor = GraphEditor()
+    # filler = AutoDBFiller('MeteoInfoTable2', 'LastInsertTable2')
+    # main_info = filler.get_info_from_main_database()
+    # value = 'Dew Point'
     #
-    # lists_of_measurements, station_names = DataHandler.get_prepared_lists_for_estimation(main_info, value_to_estimate)
+    # lists_of_measurements, station_names = DataHandler.get_prepared_lists_for_estimation(main_info, value)
     # lists_of_estimates: list = []
     #
     # error_in_estimate = 0.1
@@ -23,14 +23,10 @@ if __name__ == '__main__':
     #     lists_of_estimates.append(kf.get_list_of_estimates())
     #
     # accuracies = DataHandler.get_estimation_accuracy(lists_of_estimates, lists_of_measurements, station_names)
+    #
     # FileHandler.write_a_set_of_data_to_file('estimation_log.txt', lists_of_measurements, lists_of_estimates, station_names, accuracies)
 
-    db_client = MongoDBClient('MeteoInfoTable2', 'LastInsertTable2')
-    station1 = Station('A1 km 12 Ādaži')
-    station2 = Station('A9 km 113 Saldus')
+    sql_client = MySQLClient('139.59.212.33', 'outsider', 'password', 'forecast')
+    records = sql_client.get_all_info_from_database()
 
-    list1 = station1.get_value_from_data(db_client, 'Dew Point')
-    list2 = station2.get_value_from_data(db_client, 'Dew Point')
 
-    list3 = [1, 1, '-', '-', '-', '-', 1, '-', 1, '-', 1, '-', 1, '-', '-']
-    print(DataHandler.is_possible_to_fill_missing_data(list3))

@@ -1,4 +1,6 @@
 from datetime import datetime
+import json
+import csv
 
 
 class FileHandler:
@@ -31,3 +33,15 @@ class FileHandler:
                 file.write('<------------------------------------------->\n\n\n')
             else:
                 file.write('\n\n\n')
+
+    @staticmethod
+    def write_estimations_to_json(value: str, lists_of_estimates: list, station_names: list):
+        json_dict = {}
+
+        file_name = value + ' estimations.json'
+
+        for estimates, station_name in zip(lists_of_estimates, station_names):
+            json_dict[station_name] = estimates
+        else:
+            with open(file_name, mode='w', encoding='utf-8') as file:
+                json.dump(json_dict, file, indent=4)

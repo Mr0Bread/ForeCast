@@ -140,7 +140,7 @@ class DataHandler:
         return dict_of_accuracy
 
     @staticmethod
-    def get_json(lists_of_values):
+    def get_json_of_chosen_values(lists_of_values):
         json_dict = {}
         temp_list = []
 

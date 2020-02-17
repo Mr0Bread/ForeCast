@@ -28,5 +28,3 @@ if __name__ == '__main__':
 
     sql_client = MySQLClient('139.59.212.33', 'outsider', 'password', 'forecast')
     records = sql_client.get_all_info_from_database()
-
-

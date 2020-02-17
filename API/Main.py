@@ -17,7 +17,7 @@ def get_basic():
     for x in request.args.keys():
         if x == 'value' and request.args['value'] != 'Station':
             return DataHandler.get_json(
-                DataHandler.get_lists_of_chosen_values(db_client.get_info_from_main_database(), request.args['value']))
+                DataHandler.get_lists_of_chosen_values_with_station_names(db_client.get_info_from_main_database(), request.args['value']))
         elif x == 'list' and request.args['list'] == 'all':
             return DataHandler.get_json_of_existing_values()
         elif (x == 'value' and request.args['value'] == 'Station') or (

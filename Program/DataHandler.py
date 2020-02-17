@@ -61,7 +61,7 @@ class DataHandler:
         return list_of_station_names
 
     @staticmethod
-    def get_lists_of_chosen_values(lists_of_dicts: list, value_name: str) -> list:
+    def get_lists_of_chosen_values_with_station_names(lists_of_dicts: list, value_name: str) -> list:
         list_of_values = []
         temp_list = []
 
@@ -80,8 +80,15 @@ class DataHandler:
         lists_of_measurements = []
 
         for list_of_values in lists_of_values:
+            print(list_of_values)
             if '-' in list_of_values or '' in list_of_values:
-                continue
+                station_name = list_of_values.pop()
+                if DataHandler.is_possible_to_fill_missing_data(list_of_values):
+                    print('Can be filled')
+                    indexes = DataHandler.get_indexes_for_filling(list_of_values)
+                    list_of_values = DataHandler.fill_missing_data(list_of_values, indexes)
+                else:
+                    continue
             lists_of_measurements.append(DataHandler.get_list_of_float_numbers_and_station(list_of_values))
 
         return lists_of_measurements
@@ -99,17 +106,18 @@ class DataHandler:
 
     @staticmethod
     def get_prepared_lists_for_estimation(main_info, value: str = 'Dew Point') -> tuple:
-        lists_of_values: list = DataHandler.get_lists_of_chosen_values(main_info, value)
+        lists_of_values: list = DataHandler.get_lists_of_chosen_values_with_station_names(main_info, value)
 
-        lists_of_measurements_with_station_names: list = DataHandler.get_lists_of_measurements_with_station_names(
+        lists_of_measurements_with_station_names = DataHandler.get_lists_of_measurements_with_station_names(
             lists_of_values)
+        exit()
 
         list_of_station_names = DataHandler.get_station_names(lists_of_measurements_with_station_names)
 
-        lists_of_measurements_without_station_names: list = DataHandler.get_lists_of_measurements_without_station_names(
+        lists_of_measurements_without_station_names = DataHandler.get_lists_of_measurements_without_station_names(
             lists_of_measurements_with_station_names)
 
-        lists_of_measurements: list = lists_of_measurements_without_station_names.copy()
+        lists_of_measurements = lists_of_measurements_without_station_names.copy()
 
         return lists_of_measurements, list_of_station_names
 
@@ -243,6 +251,8 @@ class DataHandler:
         else:
             if adder > 4:
                 return False
+            elif 1 < adder < 5 and adder == len(list_of_values):
+                return False
             else:
                 return True
 
@@ -261,7 +271,7 @@ class DataHandler:
             if list_of_values[index] == '-' and list_of_values[index + adder] == '-':
                 adder += 1
             elif adder != 1:
-                indexes.append([index - 1, index + adder, adder, 'normal'])
+                indexes.append([index - 1, index + adder, 'normal'])
                 index += adder
                 adder = 1
             else:
@@ -269,7 +279,23 @@ class DataHandler:
                 adder = 1
         else:
             if adder != 1:
-                indexes.append([index - 1, index + adder - 1, adder, 'in the end'])
+                indexes.append([index - 1, index + adder, 'in the end'])
 
         return tuple(indexes)
 
+    @staticmethod
+    def fill_missing_data(list_of_values: list, indexes: tuple) -> list:
+        for index_list in indexes:
+            if index_list[-1] == 'normal':
+                average = (list_of_values[index_list[0]] + list_of_values[index_list[1]]) / 2
+
+                for i in range(index_list[0] + 1, index_list[1]):
+                    list_of_values[i] = average
+            elif index_list[-1] == 'one':
+                average = (list_of_values[index_list[0] - 1] + list_of_values[index_list[0] + 1]) / 2
+                list_of_values[index_list[0]] = average
+            elif index_list[-1] == 'in the end':
+                for i in range(index_list[0], index_list[1]):
+                    list_of_values[i] = list_of_values[index_list[0]]
+
+        return list_of_values

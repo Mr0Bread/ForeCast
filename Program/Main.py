@@ -6,8 +6,9 @@ from Program.MongoDBClient import MongoDBClient
 from Program.Station import Station
 
 if __name__ == '__main__':
-    # filler = AutoDBFiller('MeteoInfoTable2', 'LastInsertTable2')
-    # main_info = filler.get_info_from_main_database()
+    filler = AutoDBFiller('MeteoInfoTable2', 'LastInsertTable2')
+    main_info = filler.get_info_from_main_database()
+
     # value_to_estimate = 'Dew Point'
     #
     # lists_of_measurements, station_names = DataHandler.get_prepared_lists_for_estimation(main_info, value_to_estimate)
@@ -31,6 +32,5 @@ if __name__ == '__main__':
     list1 = station1.get_value_from_data(db_client, 'Dew Point')
     list2 = station2.get_value_from_data(db_client, 'Dew Point')
 
-    list3 = [1, 1, 1, '-', '-', '-', '-', 1, '-', 1, '-', '-', '-', '-']
-
-    print(DataHandler.get_indexes_for_filling(list3))
+    list3 = [1, 1, '-', '-', '-', '-', 1, '-', 1, '-', 1, '-', 1, '-', '-']
+    print(DataHandler.is_possible_to_fill_missing_data(list3))

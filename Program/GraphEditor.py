@@ -11,8 +11,8 @@ class GraphEditor:
         plt.title(station_name + ', ' + value)
         plt.legend()
         plt.show()
-        plot_name = station_name + '_' + value
-        plt.savefig(plot_name + '.png', bbox_inches='tight')
+        # plot_name = station_name + '_' + value
+        # plt.savefig(plot_name + '.png', bbox_inches='tight')
 
     @staticmethod
     def create_plots(lists_of_estimates: list, lists_of_measurements: list, station_names: list, value: str):

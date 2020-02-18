@@ -24,3 +24,9 @@ class MySQLClient:
         self.cursor.execute(command)
         records = self.cursor.fetchall()
         return records
+
+    def get_info_by_station(self, station_code: str = 'LV01'):
+        command = 'SELECT * FROM data_records WHERE stacijas_kods = %s'
+        self.cursor.execute(command, (station_code,))
+        records = self.cursor.fetchall()
+        return records

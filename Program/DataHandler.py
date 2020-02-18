@@ -112,6 +112,8 @@ class DataHandler:
             lists_of_values)
         exit()
 
+        # TODO
+
         list_of_station_names = DataHandler.get_station_names(lists_of_measurements_with_station_names)
 
         lists_of_measurements_without_station_names = DataHandler.get_lists_of_measurements_without_station_names(
@@ -238,6 +240,14 @@ class DataHandler:
                              'P80 km 35 Zādzene']}
 
     @staticmethod
+    def is_missing_data_present(list_of_values: list):
+        for x in list_of_values:
+            if x is not float:
+                return True
+        else:
+            return False
+
+    @staticmethod
     def is_possible_to_fill_missing_data(list_of_values: list) -> bool:
         index = 0
         adder = 1
@@ -297,5 +307,65 @@ class DataHandler:
             elif index_list[-1] == 'in the end':
                 for i in range(index_list[0], index_list[1]):
                     list_of_values[i] = list_of_values[index_list[0]]
+
+        return list_of_values
+
+    @staticmethod
+    def get_exact_value_from_my_sql_records(records: tuple, index: int) -> list:
+        values = []
+
+        for record in records:
+            values.append(record[index])
+
+        return values
+
+    @staticmethod
+    def get_index_of_value(value: str = 'Dew Point') -> int:
+        if value == 'id':
+            return 0
+        elif value == 'Station code':
+            return 1
+        elif value == 'Datetime':
+            return 2
+        elif value == 'Air Temperature':
+            return 3
+        elif value == 'Air Temperature(-1 h)':
+            return 4
+        elif value == 'Humidity':
+            return 5
+        elif value == 'Dew Point':
+            return 6
+        elif value == 'Precipitation':
+            return 7
+        elif value == 'Intensity':
+            return 8
+        elif value == 'Visibility':
+            return 9
+        elif value == 'Road Temperature':
+            return 10
+        elif value == 'Road Temperature(-1 h)':
+            return 11
+        elif value == 'Road Condition':
+            return 12
+        elif value == 'Road Warning':
+            return 13
+        elif value == 'Freezing Point':
+            return 14
+        elif value == 'Road Temperature 2':
+            return 15
+        elif value == 'Road Temperature 2(-1 h)':
+            return 16
+        elif value == 'Road Condition 2':
+            return 17
+        elif value == 'Road Warning 2':
+            return 18
+        elif value == 'Freezing Point 2':
+            return 19
+
+    @staticmethod
+    def get_list_of_floats(list_of_values: list) -> list:
+
+        for x in range(len(list_of_values)):
+            list_of_values[x] = float(list_of_values[x])
 
         return list_of_values

@@ -1,24 +1,12 @@
 class KalmanFilter:
 
-    def __init__(self, initial_error_in_estimate, __initial_estimate, __error_in_measurement, __measurements,
-                 number_of_tracked_values: int = 1):
-        super().__init__()
-        self.__number_of_tracked_values = number_of_tracked_values
+    def __init__(self, initial_error_in_estimate, __initial_estimate, __error_in_measurement, __measurements):
         self.__measurements = __measurements
         self.__estimate = __initial_estimate
         self.__error_in_estimate = initial_error_in_estimate
         self.__error_in_measurement = __error_in_measurement
         self.__measurement = None
         self.__kalman_gain = None
-
-    def set_measurements(self, __measurements):
-        self.__measurements = __measurements
-
-    def get_measurements(self):
-        return self.__measurements
-
-    def update_values(self, __measurements):
-        self.set_measurements(__measurements)
 
     def __calculate_kalman_gain(self) -> float:
         return self.__error_in_estimate / (self.__error_in_estimate + self.__error_in_measurement)
@@ -34,15 +22,7 @@ class KalmanFilter:
         self.__estimate = self.__calculate_estimate()
         self.__error_in_estimate = self.__calculate_error_in_estimate()
 
-    def get_current_estimate(self):
-        for measurement in self.__measurements:
-            self.__measurement = measurement
-            self.make_basic_calculations()
-
-        else:
-            return self.__estimate
-
-    def get_list_of_estimates(self) -> list:
+    def __get_estimates(self) -> list:
         list_of_estimates = []
         for measurement in self.__measurements:
             self.__measurement = measurement
@@ -52,10 +32,25 @@ class KalmanFilter:
         return list_of_estimates
 
     @staticmethod
-    def get_initial_estimate_based_on_last_measurements(measurements: list) -> float:
+    def __get_initial_estimate_based_on_last_measurements(measurements: list) -> float:
         return measurements[-1] + (
                 measurements[-1] - measurements[-2])
 
     @staticmethod
-    def get_json_with_estimation():
-        pass
+    def get_lists_of_estimates(lists_of_measurements: list, error_in_estimate: float,
+                               error_in_measurement: float) -> list:
+        lists_of_estimates = []
+
+        for measurements in lists_of_measurements:
+            initial_estimate = KalmanFilter.__get_initial_estimate_based_on_last_measurements(measurements)
+            kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
+            lists_of_estimates.append(kf.__get_estimates())
+
+        return lists_of_estimates
+
+    @staticmethod
+    def get_list_of_estimates(measurements: list, error_in_estimate: float, error_in_measurement: float) -> list:
+
+        initial_estimate = KalmanFilter.__get_initial_estimate_based_on_last_measurements(measurements)
+        kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
+        return kf.__get_estimates()

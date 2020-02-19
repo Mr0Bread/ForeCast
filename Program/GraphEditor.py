@@ -3,21 +3,39 @@ from matplotlib import pylab as plb
 
 
 class GraphEditor:
+    def __init__(self, estimates: list, measurements: list, value: str, station_name: str, kalman_gain: float):
+        self.estimates = estimates
+        self.measurements = measurements
+        self.value = value
+        self.station_name = station_name
+        self.kalman_gain = str(kalman_gain)
+        self.plt = None
 
-    @staticmethod
-    def create_plot(estimates: list, measurements: list, value: str, station_name: str):
-        plt.plot(estimates, label='estimates')
-        plt.plot(measurements, label='measurements')
-        plt.title(station_name + ', ' + value)
+    def create_est_and_meas_plot(self):
+        plt.plot(self.estimates, label='estimates', color='blue')
+        plt.plot(self.measurements, label='measurements', color='orange')
+        plt.title(self.station_name + ', ' + self.value + ' KG: ' + self.kalman_gain)
         plt.legend()
-        plt.show()
-        # plot_name = station_name + '_' + value
-        # plt.savefig(plot_name + '.png', bbox_inches='tight')
+        self.plt = plt
+
+    def create_est_plot(self):
+        plt.plot(self.estimates, color='blue')
+        plt.title('Estimates: ' + self.station_name + ', ' + self.value + ' KG: ' + self.kalman_gain)
+        self.plt = plt
+
+    def create_meas_plot(self):
+        plt.plot(self.measurements, color='orange')
+        plt.title('Measurements: ' + self.station_name + ', ' + self.value + ' KG: ' + self.kalman_gain)
+        self.plt = plt
+
+    def show_plot(self):
+        self.plt.show()
 
     @staticmethod
     def create_plots(lists_of_estimates: list, lists_of_measurements: list, station_names: list, value: str):
         for estimates, measurements, station_name in zip(lists_of_estimates, lists_of_measurements, station_names):
-            GraphEditor.create_plot(estimates, measurements, value, station_name)
+            graph = GraphEditor(estimates, measurements, value, station_name, 0.9)
+            # TODO
 
     @staticmethod
     def create_twolined_plot(lists_of_estimates: list, lists_of_measurements: list, value: str):
@@ -49,7 +67,5 @@ class GraphEditor:
     @staticmethod
     def save_created_plots(lists_of_estimates: list, lists_of_measurements: list, station_names: list,
                            value: str):
-        for estimates, measurements, station_name in zip(lists_of_estimates, lists_of_measurements, station_names):
-            plot = GraphEditor.create_plot(estimates, measurements, value, station_name)
-            plot_name = station_name + '_' + value
-            plot.savefig(plot_name, bbox_inches='tight')
+        # TODO
+        pass

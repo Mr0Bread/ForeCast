@@ -18,7 +18,7 @@ class KalmanFilter:
         return (1 - self.__kalman_gain) * self.__error_in_estimate
 
     def make_basic_calculations(self):
-        self.__kalman_gain = self.__calculate_kalman_gain()
+        self.__kalman_gain = 0.9  # self.__calculate_kalman_gain()
         self.__estimate = self.__calculate_estimate()
         self.__error_in_estimate = self.__calculate_error_in_estimate()
 
@@ -48,9 +48,7 @@ class KalmanFilter:
 
         return lists_of_estimates
 
-    @staticmethod
-    def get_list_of_estimates(measurements: list, error_in_estimate: float, error_in_measurement: float) -> list:
-
-        initial_estimate = KalmanFilter.__get_initial_estimate_based_on_last_measurements(measurements)
-        kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
-        return kf.__get_estimates()
+    def get_list_of_estimates(self) -> list:
+        initial_estimate = self.__get_initial_estimate_based_on_last_measurements(self.__measurements)
+        self.__estimate = initial_estimate
+        return self.__get_estimates()

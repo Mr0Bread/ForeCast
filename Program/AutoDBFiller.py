@@ -8,8 +8,8 @@ from Program.Request import Request
 
 
 class AutoDBFiller(MongoDBClient):
-    def __init__(self, main_database_name: str, time_database_name: str):
-        super().__init__(main_database_name, time_database_name)
+    def __init__(self, login: str, password: str, main_database_name: str, time_database_name: str):
+        super().__init__(login, password, main_database_name, time_database_name)
         self.thread = Thread()
         self.thread_is_running = False
         self.data = []

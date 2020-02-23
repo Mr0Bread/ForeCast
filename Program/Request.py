@@ -8,7 +8,7 @@ from Program.Request_data import headers, login_data
 class Request:
 
     @staticmethod
-    def get_data_list(table) -> list:
+    def get_data_lists_from_table(table) -> list:
         tmp_list = []
         data_list = []
 
@@ -25,42 +25,6 @@ class Request:
         data_list.pop(0)
 
         return data_list
-
-    @staticmethod
-    def get_date() -> str:
-        year = datetime.now().year
-        month = datetime.now().month
-        day = datetime.now().day
-
-        return 'Year: {} Month: {} Day: {}'.format(year, month, day)
-
-    def get_fill_data_doc(self, table) -> list:
-        data_doc = []
-
-        for data in self.get_data_list(table):
-            data_dict = {'Station': data[0],
-                         'Time': data[1],
-                         'Date': self.get_date(),
-                         'Air Temperature': data[2],
-                         'Air Temperature(-1 h)': data[3],
-                         'Humidity': data[4],
-                         'Dew Point': data[5],
-                         'Precipitation': data[6],
-                         'Intensity': data[7],
-                         'Visibility': data[8],
-                         'Road Temperature': data[9],
-                         'Road Temperature(-1 h)': data[10],
-                         'Road Condition': data[11],
-                         'Road Warning': data[12],
-                         'Freezing Point': data[13],
-                         'Road Temperature 2': data[14],
-                         'Road Temperature 2(-1 h)': data[15],
-                         'Road Condition 2': data[16],
-                         'Road Warning 2': data[17],
-                         'Freezing Point 2': data[18]}
-            data_doc.append(data_dict)
-
-        return data_doc
 
     @staticmethod
     def get_table(url='http://www.lvceli.lv/cms/'):

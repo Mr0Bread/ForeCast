@@ -3,9 +3,8 @@ from os.path import isfile
 
 
 class MongoDBClient:
-    def __init__(self, main_database_name: str, time_database_name: str):
-        self.my_client = pymongo.MongoClient(
-            "mongodb+srv://Mr0Bread:Elishka1Love@forecastcluster-ruxkg.gcp.mongodb.net/test?retryWrites=true&w=majority")
+    def __init__(self, login: str, password: str, main_database_name: str, time_database_name: str):
+        self.my_client = self.get_connection(login, password)
         self.main_database_name = main_database_name
         self.__main_database = self.my_client[self.main_database_name]
         self.time_database_name = time_database_name
@@ -127,7 +126,7 @@ class MongoDBClient:
     def delete_database(self, database_name: str):
         self.my_client.drop_database(database_name)
 
-    def get_info_from_main_database(self) -> list:
+    def get_all_info_from_main_database(self) -> list:
         collection_names = self.__main_database.list_collection_names()
         list_of_info = []
         temp_list = []
@@ -149,3 +148,20 @@ class MongoDBClient:
             list_of_info.append(search_result)
         else:
             return list_of_info
+
+    def get_data_from_collections(self, station_names: list) -> list:
+        list_of_info = []
+
+        for station_name in station_names:
+            for search_result in self.__main_database[station_name].find():
+                search_result.pop('_id')
+                search_result['Station'] = station_name
+                list_of_info.append(search_result)
+        else:
+            return list_of_info
+
+    @staticmethod
+    def get_connection(login, password):
+        return pymongo.MongoClient(
+            "mongodb+srv://{}:{}@forecastcluster-ruxkg.gcp.mongodb.net/test?retryWrites=true&w=majority".format(login,
+                                                                                                                password))

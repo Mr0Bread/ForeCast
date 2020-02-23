@@ -18,12 +18,13 @@ class KalmanFilter:
         return (1 - self.__kalman_gain) * self.__error_in_estimate
 
     def make_basic_calculations(self):
-        self.__kalman_gain = 0.9  # self.__calculate_kalman_gain()
+        self.__kalman_gain = self.__calculate_kalman_gain()
         self.__estimate = self.__calculate_estimate()
         self.__error_in_estimate = self.__calculate_error_in_estimate()
 
     def __get_estimates(self) -> list:
         list_of_estimates = []
+
         for measurement in self.__measurements:
             self.__measurement = measurement
             self.make_basic_calculations()

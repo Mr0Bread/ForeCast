@@ -80,11 +80,9 @@ class DataHandler:
         lists_of_measurements = []
 
         for list_of_values in lists_of_values:
-            print(list_of_values)
             if '-' in list_of_values or '' in list_of_values:
-                station_name = list_of_values.pop()
+                list_of_values.pop()
                 if DataHandler.is_possible_to_fill_missing_data(list_of_values):
-                    print('Can be filled')
                     indexes = DataHandler.get_indexes_for_filling(list_of_values)
                     list_of_values = DataHandler.fill_missing_data(list_of_values, indexes)
                 else:
@@ -105,23 +103,18 @@ class DataHandler:
         return list_of_lists_of_measurements_without_station_names
 
     @staticmethod
-    def get_prepared_lists_for_estimation(main_info, value: str = 'Dew Point') -> tuple:
-        lists_of_values: list = DataHandler.get_lists_of_chosen_values_with_station_names(main_info, value)
+    def get_prepared_lists_for_estimation(main_data, value: str = 'Dew Point') -> tuple:
+        lists_of_chosen_values = DataHandler.get_lists_of_chosen_values_with_station_names(main_data, value)
 
         lists_of_measurements_with_station_names = DataHandler.get_lists_of_measurements_with_station_names(
-            lists_of_values)
-        exit()
-
-        # TODO
+            lists_of_chosen_values)
 
         list_of_station_names = DataHandler.get_station_names(lists_of_measurements_with_station_names)
 
         lists_of_measurements_without_station_names = DataHandler.get_lists_of_measurements_without_station_names(
             lists_of_measurements_with_station_names)
 
-        lists_of_measurements = lists_of_measurements_without_station_names.copy()
-
-        return lists_of_measurements, list_of_station_names
+        return lists_of_measurements_without_station_names, list_of_station_names
 
     @staticmethod
     def get_estimation_accuracy(lists_of_estimates: list, lists_of_measurements: list, station_names: list):
@@ -259,6 +252,8 @@ class DataHandler:
                 index += adder
                 adder = 1
         else:
+            if '' in list_of_values:
+                return False
             if adder > 4:
                 return False
             elif 1 < adder < 5 and adder == len(list_of_values):
@@ -320,6 +315,15 @@ class DataHandler:
         return values
 
     @staticmethod
+    def get_exact_value_from_many_my_sql_records(list_of_records: list, index: int) -> list:
+        values = []
+
+        for records in list_of_records:
+            values.append(DataHandler.get_exact_value_from_my_sql_records(records, index))
+
+        return values
+
+    @staticmethod
     def get_index_of_value(value: str = 'Dew Point') -> int:
         if value == 'id':
             return 0
@@ -366,6 +370,56 @@ class DataHandler:
     def get_list_of_floats(list_of_values: list) -> list:
 
         for x in range(len(list_of_values)):
-            list_of_values[x] = float(list_of_values[x])
+            try:
+                list_of_values[x] = float(list_of_values[x])
+            except TypeError:
+                continue
 
         return list_of_values
+
+    @staticmethod
+    def get_lists_of_floats(lists_of_values: list) -> list:
+        __list = []
+        for list_of_values in lists_of_values:
+            __list.append(DataHandler.get_list_of_floats(list_of_values))
+
+        return __list
+
+    @staticmethod
+    def get_date() -> str:
+        from datetime import datetime
+
+        year = datetime.now().year
+        month = datetime.now().month
+        day = datetime.now().day
+
+        return 'Year: {} Month: {} Day: {}'.format(year, month, day)
+
+    @staticmethod
+    def get_data_dicts(data_lists) -> list:
+        data_dicts = []
+
+        for data in data_lists:
+            data_dict = {'Station': data[0],
+                         'Time': data[1],
+                         'Date': DataHandler.get_date(),
+                         'Air Temperature': data[2],
+                         'Air Temperature(-1 h)': data[3],
+                         'Humidity': data[4],
+                         'Dew Point': data[5],
+                         'Precipitation': data[6],
+                         'Intensity': data[7],
+                         'Visibility': data[8],
+                         'Road Temperature': data[9],
+                         'Road Temperature(-1 h)': data[10],
+                         'Road Condition': data[11],
+                         'Road Warning': data[12],
+                         'Freezing Point': data[13],
+                         'Road Temperature 2': data[14],
+                         'Road Temperature 2(-1 h)': data[15],
+                         'Road Condition 2': data[16],
+                         'Road Warning 2': data[17],
+                         'Freezing Point 2': data[18]}
+            data_dicts.append(data_dict)
+
+        return data_dicts

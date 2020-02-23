@@ -25,8 +25,27 @@ class MySQLClient:
         records = self.cursor.fetchall()
         return records
 
+    def get_all_info_by_stations(self):
+        all_info_by_stations = []
+
+        for index in range(1, 65):
+            station_code = 'LV{:02d}'.format(index)
+            all_info_by_stations.append(self.get_info_by_station(station_code))
+
+        return all_info_by_stations
+
     def get_info_by_station(self, station_code: str = 'LV01'):
         command = 'SELECT * FROM data_records WHERE stacijas_kods = %s'
         self.cursor.execute(command, (station_code,))
         records = self.cursor.fetchall()
         return records
+
+    def get_info_by_stations(self, station_codes: list) -> list:
+        info = []
+        for station_code in station_codes:
+            command = 'SELECT * FROM data_records WHERE stacijas_kods = %s'
+            self.cursor.execute(command, (station_code,))
+            records = self.cursor.fetchall()
+            info.append(records)
+        else:
+            return info

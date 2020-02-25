@@ -450,3 +450,29 @@ class DataHandler:
             else:
                 i += 1
         return lists_of_measurements
+
+    @staticmethod
+    def get_station_codes() -> list:
+        station_codes = []
+
+        for i in range(1, 65):
+            station_code = 'LV{:02d}'.format(i)
+            station_codes.append(station_code)
+
+        return station_codes
+
+    @staticmethod
+    def zip_codes_and_measurements(station_codes: list, lists_of_measurements: list) -> tuple:
+        stop = len(lists_of_measurements)
+        i = 0
+
+        while i < stop:
+            if '-' in lists_of_measurements[i] or not bool(lists_of_measurements[i]):
+                lists_of_measurements.pop(i)
+                station_codes.pop(i)
+                stop -= 1
+                i = 0
+            else:
+                i += 1
+
+        return station_codes, lists_of_measurements

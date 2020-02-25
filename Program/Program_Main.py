@@ -24,18 +24,17 @@ if __name__ == '__main__':
 
     lists_of_measurements = DataHandler.fill_missing_data_in_lists(lists_of_measurements)
 
-    lists_of_estimates = KalmanFilter.get_lists_of_estimates(lists_of_measurements, error_in_estimate, error_in_measurement)
+    station_codes = DataHandler.get_station_codes()
 
-    kalman_filter = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
-    estimates = kalman_filter.get_estimates()
+    station_codes, lists_of_measurements = DataHandler.zip_codes_and_measurements(station_codes, lists_of_measurements)
 
-    #
-    # graph = GraphEditor(list_of_estimates, init_list_of_measurements, value, 'LV01', 'Calculated')
-    #
-    # accuracies = DataHandler.get_estimation_accuracy([kf.get_list_of_estimates(), ], [list_of_measurements, ], ['LV01', ])
-    #
-    # FileHandler.write_a_set_of_data_to_file('estimation_log.txt', [list_of_measurements, ], [kf.get_list_of_estimates(), ],
-    #                                         ['LV01', ], accuracies)
-    #
-    # graph.create_est_and_meas_plot()
-    # graph.show_plot()
+    lists_of_estimates = KalmanFilter.get_lists_of_estimates(lists_of_measurements, error_in_estimate,
+                                                             error_in_measurement)
+
+    period = '19 Jan - 19 Feb'
+
+    for station_code, measurements, estimates in zip(station_codes, lists_of_measurements, lists_of_estimates):
+        graph = GraphEditor(estimates, measurements, value, station_code, period)
+        graph.create_est_and_meas_plot()
+        graph.save_plot()
+        graph.show_plot()

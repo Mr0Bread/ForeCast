@@ -22,7 +22,7 @@ class KalmanFilter:
         self.__estimate = self.__calculate_estimate()
         self.__error_in_estimate = self.__calculate_error_in_estimate()
 
-    def __get_estimates(self) -> list:
+    def get_estimates(self) -> list:
         list_of_estimates = []
 
         for measurement in self.__measurements:
@@ -33,7 +33,7 @@ class KalmanFilter:
         return list_of_estimates
 
     @staticmethod
-    def __get_initial_estimate_based_on_last_measurements(measurements: list) -> float:
+    def __get_initial_estimate(measurements: list) -> float:
         return measurements[-1] + (
                 measurements[-1] - measurements[-2])
 
@@ -43,13 +43,8 @@ class KalmanFilter:
         lists_of_estimates = []
 
         for measurements in lists_of_measurements:
-            initial_estimate = KalmanFilter.__get_initial_estimate_based_on_last_measurements(measurements)
+            initial_estimate = KalmanFilter.__get_initial_estimate(measurements)
             kf = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
-            lists_of_estimates.append(kf.__get_estimates())
+            lists_of_estimates.append(kf.get_estimates())
 
         return lists_of_estimates
-
-    def get_list_of_estimates(self) -> list:
-        initial_estimate = self.__get_initial_estimate_based_on_last_measurements(self.__measurements)
-        self.__estimate = initial_estimate
-        return self.__get_estimates()

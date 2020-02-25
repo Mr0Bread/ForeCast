@@ -20,12 +20,15 @@ if __name__ == '__main__':
     error_in_estimate = 1.0
     error_in_measurement = 1.0
     initial_estimate = 1.0
-    i = 0
-    for x in lists_of_measurements:
-        i += 1
-        print(x)
-    else:
-        print(i)
+    lists_of_measurements = DataHandler.replace_none_with_dash(lists_of_measurements)
+
+    lists_of_measurements = DataHandler.fill_missing_data_in_lists(lists_of_measurements)
+
+    lists_of_estimates = KalmanFilter.get_lists_of_estimates(lists_of_measurements, error_in_estimate, error_in_measurement)
+
+    kalman_filter = KalmanFilter(error_in_estimate, initial_estimate, error_in_measurement, measurements)
+    estimates = kalman_filter.get_estimates()
+
     #
     # graph = GraphEditor(list_of_estimates, init_list_of_measurements, value, 'LV01', 'Calculated')
     #

@@ -84,7 +84,7 @@ class DataHandler:
                 list_of_values.pop()
                 if DataHandler.is_possible_to_fill_missing_data(list_of_values):
                     indexes = DataHandler.get_indexes_for_filling(list_of_values)
-                    list_of_values = DataHandler.fill_missing_data(list_of_values, indexes)
+                    list_of_values = DataHandler.fill_missing_data_in_list(list_of_values, indexes)
                 else:
                     continue
             lists_of_measurements.append(DataHandler.get_list_of_float_numbers_and_station(list_of_values))
@@ -254,6 +254,7 @@ class DataHandler:
         else:
             if '' in list_of_values:
                 return False
+
             if adder > 4:
                 return False
             elif 1 < adder < 5 and adder == len(list_of_values):
@@ -289,7 +290,7 @@ class DataHandler:
         return tuple(indexes)
 
     @staticmethod
-    def fill_missing_data(list_of_values: list, indexes: tuple) -> list:
+    def fill_missing_data_in_list(list_of_values: list, indexes: tuple) -> list:
         for index_list in indexes:
             if index_list[-1] == 'normal':
                 average = (list_of_values[index_list[0]] + list_of_values[index_list[1]]) / 2
@@ -423,3 +424,29 @@ class DataHandler:
             data_dicts.append(data_dict)
 
         return data_dicts
+
+    @staticmethod
+    def replace_none_with_dash(lists_of_measurements: list) -> list:
+        i = 0
+
+        for list_of_measurements in lists_of_measurements:
+            for _ in list_of_measurements:
+                if list_of_measurements[i] is None:
+                    list_of_measurements[i] = '-'
+                i += 1
+            i = 0
+
+        return lists_of_measurements
+
+    @staticmethod
+    def fill_missing_data_in_lists(lists_of_measurements: list) -> list:
+        i = 0
+        for list_of_measurement in lists_of_measurements:
+            if DataHandler.is_possible_to_fill_missing_data(list_of_measurement):
+                indexes = DataHandler.get_indexes_for_filling(list_of_measurement)
+                list_of_measurement = DataHandler.fill_missing_data_in_list(list_of_measurement, indexes)
+                lists_of_measurements[i] = list_of_measurement
+                i += 1
+            else:
+                i += 1
+        return lists_of_measurements

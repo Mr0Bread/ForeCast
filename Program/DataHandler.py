@@ -476,3 +476,27 @@ class DataHandler:
                 i += 1
 
         return station_codes, lists_of_measurements
+
+    @staticmethod
+    def get_lists_of_ints(lists_of_values) -> list:
+        for values in lists_of_values:
+            i = 0
+            while i < len(values):
+                values[i] = int(values[i])
+                i += 1
+
+        return lists_of_values
+
+    @staticmethod
+    def get_accuracy(measurements: list, estimates: list) -> float:
+        from sklearn.metrics import accuracy_score
+
+        return accuracy_score(measurements, estimates)
+
+    @staticmethod
+    def get_accuracies(lists_of_measurements: list, lists_of_estimates: list) -> list:
+        accuracies = []
+        for measurements, estimates in zip(lists_of_measurements, lists_of_estimates):
+            accuracies.append(DataHandler.get_accuracy(measurements, estimates))
+
+        return accuracies

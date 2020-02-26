@@ -5,18 +5,19 @@ from matplotlib import pylab as plb
 class GraphEditor:
     index = 0
 
-    def __init__(self, estimates: list, measurements: list, value: str, station_name: str, period: str):
+    def __init__(self, estimates: list, measurements: list, value: str, station_name: str, period: str, accuracy=None):
         self.estimates = estimates
         self.measurements = measurements
         self.value = value
         self.station_name = station_name
         self.period = period
+        self.accuracy = accuracy
         self.plt = None
 
     def create_est_and_meas_plot(self):
         plt.plot(self.estimates, label='estimates', color='blue')
         plt.plot(self.measurements, label='measurements', color='orange')
-        plt.title(self.station_name + ', ' + self.value + ', Period: ' + self.period)
+        plt.title(self.station_name + ', Period: ' + self.period)
         plt.ylabel(self.value)
         plt.xlabel('Observations')
         plt.legend()
@@ -24,14 +25,14 @@ class GraphEditor:
 
     def create_est_plot(self):
         plt.plot(self.estimates, color='blue')
-        plt.title('Estimates: ' + self.station_name + ', ' + self.value + ', Period: ' + self.period)
+        plt.title('Estimates: ' + self.station_name + ', Period: ' + self.period)
         plt.ylabel(self.value)
         plt.xlabel('Observations')
         self.plt = plt
 
     def create_meas_plot(self):
         plt.plot(self.measurements, color='orange')
-        plt.title('Measurements: ' + self.station_name + ', ' + self.value + ', Period: ' + self.period)
+        plt.title('Measurements: ' + self.station_name + ', Period: ' + self.period)
         plt.ylabel(self.value)
         plt.xlabel('Observations')
         self.plt = plt
@@ -43,9 +44,13 @@ class GraphEditor:
         self.plt.savefig('Plot{}.pdf'.format(GraphEditor.index), dpi=300)
         GraphEditor.index += 1
 
-    @staticmethod
-    def create_plots(lists_of_estimates: list, lists_of_measurements: list, station_names: list, value: str):
-        pass
+    def create_accuracy_bar_plot(self):
+        plt.bar(self.accuracy, label='accuracy', color='blue')
+        plt.xlabel('Observations')
+        plt.ylabel('Accuracy %')
+        plt.title(self.value + ' Accuracy, ' + 'Period: ' + self.period)
+        plt.legend()
+        self.plt = plt
 
     @staticmethod
     def create_twolined_plot(lists_of_estimates: list, lists_of_measurements: list, value: str):

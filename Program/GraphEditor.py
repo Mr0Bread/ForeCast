@@ -41,7 +41,7 @@ class GraphEditor:
         self.plt.show()
 
     def save_plot(self):
-        self.plt.savefig('Plot{}.pdf'.format(GraphEditor.index), dpi=300)
+        self.plt.savefig('Plot{}.png'.format(GraphEditor.index), dpi=300)
         GraphEditor.index += 1
 
     def create_accuracy_bar_plot(self):

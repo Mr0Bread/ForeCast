@@ -366,6 +366,8 @@ class DataHandler:
             return 18
         elif value == 'Freezing Point 2':
             return 19
+        else:
+            raise Exception
 
     @staticmethod
     def get_list_of_floats(list_of_values: list) -> list:
@@ -496,6 +498,10 @@ class DataHandler:
     @staticmethod
     def get_accuracies(lists_of_measurements: list, lists_of_estimates: list) -> list:
         accuracies = []
+
+        lists_of_estimates = DataHandler.get_lists_of_ints(lists_of_estimates)
+        lists_of_measurements = DataHandler.get_lists_of_ints(lists_of_measurements)
+
         for measurements, estimates in zip(lists_of_measurements, lists_of_estimates):
             accuracies.append(DataHandler.get_accuracy(measurements, estimates))
 

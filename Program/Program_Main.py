@@ -43,7 +43,7 @@ if __name__ == '__main__':
         graph.show_plot()
 
     wb_to_write = Workbook()
-    wb_with_accuracies = load_workbook('test_accuracies.xlsx')
+    wb_with_accuracies = load_workbook('../../../test_accuracies.xlsx')
     ws = wb_with_accuracies.active
 
     accuracies = []

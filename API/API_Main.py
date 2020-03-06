@@ -1,14 +1,9 @@
 from flask import Flask, request
-from flask_restful import Resource, Api
-from json import dumps, dump
-from flask_jsonpify import jsonify
-from Program.MongoDBClient import MongoDBClient
 from Program.DataHandler import DataHandler
 from Program.KalmanFilter import KalmanFilter
 from Program.MySQLClient import MySQLClient
 
 app = Flask(__name__)
-api = Api(app)
 
 
 @app.route('/get/', methods=['GET'])
@@ -139,6 +134,3 @@ def get_all_estimations():
         data_dict = {}
 
     return json
-
-
-app.run(port='5001', debug=True)
